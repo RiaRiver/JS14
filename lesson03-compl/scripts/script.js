@@ -34,9 +34,9 @@ role =
     : 'студент';
 
 // Задание 1: Вывод через if
-if (lang == 'ru') {
+if (lang === 'ru') {
   console.log('Дни недели: ' + daysObj.ru.join(', '));
-} else if (lang == 'en') {
+} else if (lang === 'en') {
   console.log('Дни недели: ' + daysObj.en.join(', '));
 } else {
   console.log('Ошибка: Не верно задано значение языка.');
