@@ -1,33 +1,23 @@
 'use strict';
 
 // Переменные предыдущих уроков
-let money = 5000,
+let money = +prompt('Ваш месячный доход?'),
   income = 'Freelance',
-  addExpenses = 'Taxes, Internet, Taxi',
-  deposit = true,
+  addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую.'),
+  deposit = confirm('Есть ли у вас депозит в банке?'),
   mission = 300000,
   period = 9,
   budgetDay = money / 30,
   // Переменные текущего урока
-  expenses1,
-  expenses2,
-  amount1,
-  amount2,
+  expenses1 = prompt('Введите обязательную статью расходов?'),
+  amount1 = +prompt('Во сколько это обойдется?') || 0,
+  expenses2 = prompt('Введите обязательную статью расходов?'),
+  amount2 = +prompt('Во сколько это обойдется?') || 0,
   budgetMonth,
   missionPeriod; // Переменная не по заданию, чтобы не дублировать код в выводе
 
 // Функционал предыдущих уроков
 addExpenses = addExpenses.toLocaleLowerCase().split(', ');
-
-// Функционал текущего урока
-//Вопросы пользователю
-money = prompt('Ваш месячный доход?');
-addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую.');
-deposit = confirm('Есть ли у вас депозит в банке?');
-expenses1 = prompt('Введите обязательную статью расходов?');
-amount1 = prompt('Во сколько это обойдется?');
-expenses2 = prompt('Введите обязательную статью расходов?');
-amount2 = prompt('Во сколько это обойдется?');
 
 // Логика
 budgetMonth = money - amount1 - amount2;
