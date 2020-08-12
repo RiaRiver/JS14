@@ -19,16 +19,16 @@ const showTypeOf = function (data) {
   console.log(`Тип значения "${data}": ${typeof data}`);
 };
 
-const getExpensesMonth = function () {
+const getExpensesMonth = function (amount1, amount2) {
   return amount1 + amount2;
 };
 
-const getAccumulatedMonth = function () {
-  return money - getExpensesMonth();
+const getAccumulatedMonth = function (money, amount1, amoun2) {
+  return money - getExpensesMonth(amount1, amount2);
 };
 
-const getTargetMonth = function () {
-  return mission / getAccumulatedMonth();
+const getTargetMonth = function (mission, accumulatedMonth) {
+  return mission / accumulatedMonth;
 };
 
 const getStatusIncome = function (budgetDay) {
@@ -49,15 +49,15 @@ const getStatusIncome = function (budgetDay) {
 // Инструкции
 addExpenses = addExpenses.toLocaleLowerCase().split(', ');
 
-accumulatedMonth = getAccumulatedMonth();
+accumulatedMonth = getAccumulatedMonth(money, amount1, amount2);
 budgetDay = accumulatedMonth / 30;
-missionPeriod = getTargetMonth(); // Использую переменную, чтобы в выводе три раза функцию не вызывать
+missionPeriod = getTargetMonth(mission, accumulatedMonth); // Использую переменную, чтобы в выводе три раза функцию не вызывать
 
 // Вывод в консоль
 showTypeOf(money);
 showTypeOf(income);
 showTypeOf(deposit);
-console.log('Расходы за месяц: ', getExpensesMonth());
+console.log('Расходы за месяц: ', getExpensesMonth(amount1, amount2));
 console.log('Возможные расходы: ', addExpenses);
 console.log(
   `Цель будет достигнута за: ${Math.ceil(missionPeriod)} ${
