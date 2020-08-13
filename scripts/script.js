@@ -18,16 +18,16 @@ const isNumber = function (v) {
 };
 
 const start = function () {
-  let money;
+  let temp;
   do {
-    money = prompt('Ваш месячный доход?');
-  } while (!isNumber(money));
+    temp = prompt('Ваш месячный доход?');
+  } while (!isNumber(temp));
 
-  return +money;
+  return +temp;
 };
 
 const showTypeOf = function (data) {
-  console.log(`Тип значения "${data}": ${typeof data}`);
+  return `Тип значения "${data}": ${typeof data}`;
 };
 
 // Не чистая. Можно разбить на получение статей расходов и сумм в переменные и на суммирование. Надо?
@@ -85,9 +85,9 @@ budgetDay = accumulatedMonth / 30;
 missionPeriod = getTargetMonth(mission, accumulatedMonth); // Использую переменную, чтобы в выводе три раза функцию не вызывать
 
 // Вывод в консоль
-showTypeOf(money);
-showTypeOf(income);
-showTypeOf(deposit);
+console.log(showTypeOf(money));
+console.log(showTypeOf(income));
+console.log(showTypeOf(deposit));
 
 console.log('Расходы за месяц: ', expensesAmount);
 console.log('Возможные расходы: ', addExpenses);
