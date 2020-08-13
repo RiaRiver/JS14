@@ -1,30 +1,55 @@
 'use strict';
 
-let money = +prompt('Ваш месячный доход?'),
+let money,
   income = 'Freelance',
-  addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую.'),
-  deposit = confirm('Есть ли у вас депозит в банке?'),
+  addExpenses,
+  deposit,
   mission = 300000,
   period = 9,
   budgetDay = money / 30, //это из предыдущих уроков, просили не удалять
-  expenses1 = prompt('Введите обязательную статью расходов?'),
-  amount1 = +prompt('Во сколько это обойдется?'),
-  expenses2 = prompt('Введите обязательную статью расходов?'),
-  amount2 = +prompt('Во сколько это обойдется?'),
+  expenses = [],
+  expensesAmount,
   missionPeriod, // Переменная не по заданию, чтобы не дублировать код в выводе
   accumulatedMonth;
 
 // Функции
+const isNumber = function (v) {
+  return !isNaN(parseFloat(v)) && isFinite(v);
+};
+
+const start = function () {
+  let money;
+  do {
+    money = prompt('Ваш месячный доход?');
+  } while (!isNumber(money));
+
+  return +money;
+};
+
 const showTypeOf = function (data) {
   console.log(`Тип значения "${data}": ${typeof data}`);
 };
 
-const getExpensesMonth = function (amount1, amount2) {
-  return amount1 + amount2;
+// Не чистая. Можно разбить на получение статей расходов и сумм в переменные и на суммирование. Надо?
+const getExpensesMonth = function () {
+  let sum = 0;
+  let amount;
+
+  for (let i = 0; i < 2; i++) {
+    expenses[i] = prompt('Введите обязательную статью расходов?');
+
+    do {
+      amount = prompt('Во сколько это обойдется?');
+    } while (!isNumber(amount));
+
+    sum += +amount;
+  }
+
+  return sum;
 };
 
-const getAccumulatedMonth = function (money, amount1, amoun2) {
-  return money - getExpensesMonth(amount1, amount2);
+const getAccumulatedMonth = function (money, expensesAmount) {
+  return money - expensesAmount;
 };
 
 const getTargetMonth = function (mission, accumulatedMonth) {
@@ -47,9 +72,15 @@ const getStatusIncome = function (budgetDay) {
 };
 
 // Инструкции
-addExpenses = addExpenses.toLocaleLowerCase().split(', ');
+money = start();
 
-accumulatedMonth = getAccumulatedMonth(money, amount1, amount2);
+// Пересла сюда ввод из переменных, чтобы данные запрашивались в нужном порядке
+addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую.');
+deposit = confirm('Есть ли у вас депозит в банке?');
+
+addExpenses = addExpenses.toLocaleLowerCase().split(', ');
+expensesAmount = getExpensesMonth();
+accumulatedMonth = getAccumulatedMonth(money, expensesAmount);
 budgetDay = accumulatedMonth / 30;
 missionPeriod = getTargetMonth(mission, accumulatedMonth); // Использую переменную, чтобы в выводе три раза функцию не вызывать
 
@@ -57,12 +88,15 @@ missionPeriod = getTargetMonth(mission, accumulatedMonth); // Использую
 showTypeOf(money);
 showTypeOf(income);
 showTypeOf(deposit);
-console.log('Расходы за месяц: ', getExpensesMonth(amount1, amount2));
+
+console.log('Расходы за месяц: ', expensesAmount);
 console.log('Возможные расходы: ', addExpenses);
 console.log(
-  `Цель будет достигнута за: ${Math.ceil(missionPeriod)} ${
-    missionPeriod <= 1 ? 'месяц' : missionPeriod <= 4 ? 'месяца' : 'месяцев'
-  }`
+  missionPeriod < 0
+    ? 'Цель не будет достигнута'
+    : `Цель будет достигнута за: ${Math.ceil(missionPeriod)} ${
+        missionPeriod <= 1 ? 'месяц' : missionPeriod <= 4 ? 'месяца' : 'месяцев'
+      }`
 );
 console.log('Бюджет на день: ', Math.floor(budgetDay));
 console.log('Ваш статус: ', getStatusIncome(budgetDay));
