@@ -90,8 +90,7 @@ const game = function () {
   return checkAttempt;
 };
 
-// Запуск
-
+// Функция старта игры
 const startGame = function () {
   if (game()()) {
     startGame();
@@ -100,4 +99,5 @@ const startGame = function () {
   }
 };
 
+// Запуск
 startGame();
