@@ -35,38 +35,38 @@ let appData = {
       do {
         amount = prompt('Во сколько это обойдется?');
       } while (!isNumber(amount));
-      appData.expenses[expense] = +amount;
+      this.expenses[expense] = +amount;
     }
 
-    appData.addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую.')
+    this.addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую.')
       .toLocaleLowerCase()
       .split(',');
-    appData.addExpenses.forEach((item, i, arr) => (arr[i] = item.trim()));
+    this.addExpenses.forEach((item, i, arr) => (arr[i] = item.trim()));
 
-    appData.deposit = confirm('Есть ли у вас депозит в банке?');
+    this.deposit = confirm('Есть ли у вас депозит в банке?');
   },
   getExpensesMonth: function () {
-    for (let key in appData.expenses) {
-      appData.expensesMonth += appData.expenses[key];
+    for (let key in this.expenses) {
+      this.expensesMonth += this.expenses[key];
     }
   },
 
   getBudget: function () {
-    appData.budgetMonth = appData.budget - appData.expensesMonth;
-    appData.budgetDay = appData.budgetMonth / 30;
+    this.budgetMonth = this.budget - this.expensesMonth;
+    this.budgetDay = this.budgetMonth / 30;
   },
   getTargetMonth: function () {
-    return appData.mission / appData.budgetMonth;
+    return this.mission / this.budgetMonth;
   },
   getStatusIncome: function () {
     switch (true) {
-      case appData.budgetDay < 0:
+      case this.budgetDay < 0:
         return 'Что-то пошло не так';
-      case appData.budgetDay < 600:
+      case this.budgetDay < 600:
         return 'К сожалению, у вас уровень дохода ниже среднего';
-      case appData.budgetDay < 1200:
+      case this.budgetDay < 1200:
         return 'У вас средний уровень дохода';
-      case appData.budgetDay >= 1200:
+      case this.budgetDay >= 1200:
         return 'У вас высокий уровень дохода';
       default:
         return 'Что-то пошло не так';
