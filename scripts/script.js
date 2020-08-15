@@ -1,7 +1,6 @@
 'use strict';
-const week = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье'];
+const week = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
 const currentDayIndex = (new Date().getDay() + 6) % 7;
-
 const getStyle = function (dayInd, currentDayInd) {
   let style = 'font-family: Arial; font-size: 12px;';
   if (dayInd > 4) {
@@ -13,6 +12,11 @@ const getStyle = function (dayInd, currentDayInd) {
   return style;
 };
 
-week.forEach((item, i) => {
-  console.log('%c%s', getStyle(i, currentDayIndex), item);
-});
+week
+  .map((item, i) => {
+    const p = document.createElement('p');
+    p.textContent = item;
+    p.style.cssText = getStyle(i, currentDayIndex);
+    return p;
+  })
+  .forEach((item) => document.body.append(item));
