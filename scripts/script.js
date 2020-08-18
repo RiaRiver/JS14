@@ -17,7 +17,36 @@ const start = function () {
   return +temp;
 };
 
-// Переменные, объект отдельно, а не через запятую, потому что мне так удобнее читать
+// Переменные
+// Урок 9 Пункт a: Кнопку "Рассчитать" через id
+let startButton = document.getElementById('start'),
+  // Урок 9 Пункт b: Кнопки “+” (плюс) через Tag, каждую в своей переменной.
+  incomeAddButton = document.getElementsByTagName('button')[0],
+  expensesAddButton = document.getElementsByTagName('button')[1],
+  // Урок 9 Пункт c: Чекбокс по id через querySelector
+  depositCheck = document.querySelector('#deposit-check'),
+  // Урок 9 Пункт d: Поля для ввода возможных доходов (additional_income-item) при помощи querySelectorAll
+  additionalIncomeItemInput1 = document.querySelectorAll('.additional_income-item')[0],
+  additionalIncomeItemInput2 = document.querySelectorAll('.additional_income-item')[1],
+  // Урок 9 Пункт e: Каждый элемент в правой части программы через класс(не через querySelector), которые имеют в имени класса "-value", начиная с class="budget_day-value" и заканчивая class="target_month-value">
+  // Сделала и budget_month-value, потому что в пункте f просят оставшиеся поля, не поняла надо его или нет
+  budgetMonthValue = document.getElementsByClassName('budget_month-value')[0],
+  budgetDayValue = document.getElementsByClassName('budget_day-value')[0],
+  expensesMonthValue = document.getElementsByClassName('expenses_month-value')[0],
+  additionalIncomeValue = document.getElementsByClassName('additional_income-value')[0],
+  additionalExpensesValue = document.getElementsByClassName('additional_expenses-value')[0],
+  incomePeriodValue = document.getElementsByClassName('income_period-value')[0],
+  targetMonthValue = document.getElementsByClassName('target_month-value')[0],
+  // Урок 9 Пункт f: Оставшиеся поля через querySelector каждый в отдельную переменную: поля ввода (input) с левой стороны и не забудьте про range.
+  salaryAmountInput = document.querySelector('.salary-amount'),
+  incomeTitleInput = document.querySelector('input.income-title'),
+  incomeAmountInput = document.querySelector('.income-amount'),
+  expensesTitleInput = document.querySelector('input.expenses-title'),
+  expensesAmountInput = document.querySelector('.expenses-amount'),
+  additionalExpensesItemInput = document.querySelector('.additional_expenses-item'),
+  targetAmountInput = document.querySelector('.target-amount'),
+  periodSelectInput = document.querySelector('.period-select');
+
 let missionPeriod; // Переменная не по заданию, чтобы не дублировать код в выводе
 
 let appData = {
@@ -146,3 +175,27 @@ console.log('Наша программа включает в себя данны
 for (let key in appData) {
   console.log(`${key} : ${appData[key]}`);
 }
+
+// Временный вывод, чтобы проверить получение элементов
+console.log('%c%sВременный вывод для проверки получения элементов:', 'font-weight: bold; color: blue;');
+console.log('salaryAmountInput: ', salaryAmountInput);
+console.log('incomeTitleInput: ', incomeTitleInput);
+console.log('incomeAmountInput: ', incomeAmountInput);
+console.log('incomeAddButton: ', incomeAddButton);
+console.log('additionalIncomeItem1: ', additionalIncomeItemInput1);
+console.log('additionalIncomeItem2: ', additionalIncomeItemInput2);
+console.log('expensesTitleInput: ', expensesTitleInput);
+console.log('expensesAmountInput: ', expensesAmountInput);
+console.log('expensesAddButton: ', expensesAddButton);
+console.log('additionalExpensesItemInput: ', additionalExpensesItemInput);
+console.log('depositCheck: ', depositCheck);
+console.log('targetAmountInput: ', targetAmountInput);
+console.log('periodSelectInput: ', periodSelectInput);
+console.log('budgetMonthValue: ', budgetMonthValue);
+console.log('budgetDayValue: ', budgetDayValue);
+console.log('expensesMonthValue: ', expensesMonthValue);
+console.log('additionalIncomeValue: ', additionalIncomeValue);
+console.log('additionalExpensesValue: ', additionalExpensesValue);
+console.log('incomePeriodValue: ', incomePeriodValue);
+console.log('targetMonthValue: ', targetMonthValue);
+console.log('startButton: ', startButton);
