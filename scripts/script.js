@@ -4,6 +4,10 @@ const isNumber = function (v) {
   return !isNaN(parseFloat(v)) && isFinite(v);
 };
 
+const isText = function (v) {
+  return !(v === null || v.trim() === '' || !isNaN(parseFloat(v)));
+};
+
 const start = function () {
   let temp;
   do {
@@ -26,25 +30,63 @@ let appData = {
   budgetMonth: 0,
   budgetDay: 0,
   deposit: false,
+  depositPercent: 0,
+  depositAmount: 0,
   mission: 300000,
   period: 9,
   asking: function () {
+    let expense, amount;
+
+    if (confirm('Есть ли у вас дополнительный источник заработока?')) {
+      let incomeItem, incomeAmount;
+
+      do {
+        incomeItem = prompt('Какой у вас дополнительный заработок?');
+      } while (!isText(incomeItem));
+
+      do {
+        incomeAmount = prompt('Сколько вы зарабатываете на этом за месяц?');
+      } while (!isNumber(incomeAmount));
+
+      this.income[incomeItem.trim()] = +incomeAmount;
+    }
+
     for (let i = 0; i < 2; i++) {
-      let expense = prompt('Введите обязательную статью расходов?');
-      let amount;
+      do {
+        expense = prompt('Введите обязательную статью расходов?');
+      } while (!isText(expense));
+
       do {
         amount = prompt('Во сколько это обойдется?');
       } while (!isNumber(amount));
-      this.expenses[expense] = +amount;
+
+      this.expenses[expense.trim()] = +amount;
     }
 
     this.addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую.')
       .toLocaleLowerCase()
       .split(',');
-    this.addExpenses.forEach((item, i, arr) => (arr[i] = item.trim()));
+    this.addExpenses = this.addExpenses.map((item) => item.trim()).filter((item) => item !== '');
 
     this.deposit = confirm('Есть ли у вас депозит в банке?');
   },
+
+  getDipositInfo: function () {
+    if (this.deposit) {
+      do {
+        this.depositAmount = prompt('Какая сумма вашего депозита?');
+      } while (!isNumber(this.depositAmount));
+
+      do {
+        this.depositPercent = prompt('Какой процент у вашего депозита?');
+      } while (!isNumber(this.depositPercent));
+    }
+  },
+
+  calcSavedMoney: function () {
+    return this.budgetMonth * this.period;
+  },
+
   getExpensesMonth: function () {
     for (let key in this.expenses) {
       this.expensesMonth += this.expenses[key];
@@ -77,12 +119,21 @@ let appData = {
 // Инструкции
 appData.budget = start();
 appData.asking();
+appData.getDipositInfo();
 appData.getExpensesMonth();
 appData.getBudget();
 missionPeriod = appData.getTargetMonth(); // Использую переменную, чтобы в выводе три раза функцию не вызывать
 
 // Вывод в консоль
 console.log('Расходы за месяц: ', appData.expensesMonth);
+console.log(
+  'Возможные расходы:',
+  appData.addExpenses
+    .map((item) => {
+      return `${item[0].toUpperCase()}${item.slice(1)}`;
+    })
+    .join(', ')
+);
 console.log(
   missionPeriod < 0
     ? 'Цель не будет достигнута'
