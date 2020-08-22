@@ -7,11 +7,11 @@ const todoСontrol = document.querySelector('.todo-control'),
 let todoData;
 
 const storage = {
-  save: function () {
-    localStorage.todoData = JSON.stringify(todoData);
+  save: function (objName, obj) {
+    localStorage[objName] = JSON.stringify(obj);
   },
-  load: function () {
-    todoData = localStorage.todoData ? JSON.parse(localStorage.todoData) : [];
+  load: function (objName) {
+    return localStorage[objName] ? JSON.parse(localStorage[objName]) : [];
   },
 };
 
@@ -49,7 +49,7 @@ const render = function () {
       render();
     });
   });
-  storage.save();
+  storage.save('todoData', todoData);
 };
 
 todoСontrol.addEventListener('submit', (event) => {
@@ -67,10 +67,10 @@ todoСontrol.addEventListener('submit', (event) => {
 });
 
 document.addEventListener('focus', () => {
-  storage.load();
+  todoData = storage.load('todoData');
   render();
 });
 
 // Старт
-storage.load();
+todoData = storage.load('todoData');
 render();
