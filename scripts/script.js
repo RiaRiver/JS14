@@ -9,9 +9,8 @@ const isText = function (v) {
 };
 
 // Сброс всех полей, вызываю при загрузке, чтобы предыдущие данные не оставались
-const resetInputs = function () {
-  const inputs = document.querySelectorAll('input');
-  inputs.forEach((item) => {
+const resetInputs = function (elems) {
+  elems.forEach((item) => {
     item.value = '';
     periodSelectInput.value = 1;
     depositCheck.checked = false;
@@ -36,6 +35,29 @@ const showPeriod = function () {
   periodAmount.textContent = periodSelectInput.value;
 };
 
+// Контроль ввода в поле
+const allowInput = function (event, pattern) {
+  if (pattern.test(event.key) || event.key.length > 1 || event.ctrlKey) {
+    return;
+  } else {
+    event.preventDefault();
+  }
+};
+
+// Добавление слушателя на Input
+const addInputListener = function (item, regExp) {
+  if (item.placeholder === 'Наименование') {
+    item.addEventListener('keydown', (event) => {
+      allowInput(event, regExp.patternText);
+    });
+  }
+  if (item.placeholder === 'Сумма') {
+    item.addEventListener('keydown', (event) => {
+      allowInput(event, regExp.patternDigits);
+    });
+  }
+};
+
 // Переменные
 const startButton = document.getElementById('start'),
   salaryAmountInput = document.querySelector('.salary-amount'),
@@ -55,7 +77,9 @@ const startButton = document.getElementById('start'),
   additionalIncomeValue = document.getElementsByClassName('additional_income-value')[0],
   additionalExpensesValue = document.getElementsByClassName('additional_expenses-value')[0],
   incomePeriodValue = document.getElementsByClassName('income_period-value')[0],
-  targetMonthValue = document.getElementsByClassName('target_month-value')[0];
+  targetMonthValue = document.getElementsByClassName('target_month-value')[0],
+  inputs = document.querySelectorAll('input'),
+  regExp = { patternText: /[а-яА-ЯёЁ\p{P} ]/u, patternDigits: /\d/ };
 
 const appData = {
   budget: 0,
@@ -104,6 +128,7 @@ const appData = {
     const incomeItemClone = incomeItems[0].cloneNode(true);
     Array.from(incomeItemClone.children).forEach((item) => {
       item.value = '';
+      addInputListener(item, regExp);
     });
     incomeAddButton.before(incomeItemClone);
     if (incomeItems.length > 2) {
@@ -115,6 +140,7 @@ const appData = {
     const expensesItemClone = expensesItems[0].cloneNode(true);
     Array.from(expensesItemClone.children).forEach((item) => {
       item.value = '';
+      addInputListener(item, regExp);
     });
     expensesAddButton.before(expensesItemClone);
     if (expensesItems.length > 2) {
@@ -232,9 +258,12 @@ const appData = {
 };
 
 // Сброс при запуске и слушатели
-resetInputs();
+resetInputs(inputs);
 salaryAmountInput.addEventListener('input', checkSalaryAmount);
 startButton.addEventListener('click', appData.start);
 incomeAddButton.addEventListener('click', appData.addIncomeBlock);
 expensesAddButton.addEventListener('click', appData.addExpensesBlock);
 periodSelectInput.addEventListener('input', showPeriod);
+inputs.forEach((item) => {
+  addInputListener(item, regExp);
+});
