@@ -1,15 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JavaScript 14</title>
   <script src="scripts/script.js" defer></script>
+  <link rel="stylesheet" href="css/style.css">
+  <title>JavaScript14 Bonus 1</title>
 </head>
 
 <body>
-
+  <main>
+    <header class="header">
+      <div class="container">
+        <h1>Привет, <span id="user-name"></span>!</h1>
+        <button class="button signup" data-toggle='signup'>Регистрация</button>
+        <button class="button signin" data-toggle='signin'>Авторизация</button>
+        <button class="button logout">Выйти</button>
+      </div>
+    </header>
+    <section class="users">
+      <div class="container">
+        <h2>Зарегистрированные пользователи</h2>
+        <ul class="users__block">
+        </ul>
+      </div>
+    </section>
+    <div class="modal modal-signup">
+      <div class="modal__dialog">
+        <h3>Регистрация</h3>
+        <button class="modal__close"></button>
+        <form action="" class="form form-signup" data-type="signup">
+          <input type="text" class="user-name" name="user-name" placeholder="Имя Фамилия">
+          <input type="text" class="login" name="login" placeholder="Имя пользователя">
+          <input type="text" class="password" name="passsword" placeholder="Пароль">
+          <div class="errors-block"></div>
+          <button class="button signup">Зарегистрироваться</button>
+        </form>
+      </div>
+    </div>
+    <div class="modal modal-signin">
+      <div class="modal__dialog">
+        <h3>Авторизация</h3>
+        <button class="modal__close"></button>
+        <form action="" class="form form-signin" data-type="signin">
+          <input type="text" class="login" name="login" placeholder="Имя пользователя">
+          <input type="text" class="password" name="passsword" placeholder="Пароль">
+          <div class="errors-block"></div>
+          <button class="button signin">Войти</button>
+        </form>
+      </div>
+    </div>
+  </main>
 </body>
 
 </html>
