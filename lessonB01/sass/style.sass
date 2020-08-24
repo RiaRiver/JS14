@@ -1,0 +1,154 @@
+@import "normalize"
+$primary: #64c864
+
+*
+  box-sizing: border-box
+  margin: 0
+  padding: 0
+html
+  font-size: 14px
+body
+  background: lighten($primary, 37)
+header,section
+  padding: 1rem 0
+h1
+  font-size: 2rem
+  margin: 0.5rem 0
+h2
+  font-size: 1.7rem
+  margin: 0.5em 0
+h3
+  line-height: 2rem
+  margin-bottom: 1rem
+  text-align: center
+  font-size: 1.5rem
+input
+  border: none
+  border-radius: 5px
+  height: 1.5rem
+  padding: 0 10px
+  margin-bottom: 5px
+
+.container
+  width: 95%
+  max-width: 1140px
+  margin: auto
+
+.users
+  &__block
+    list-style: none
+
+.user
+  display: flex
+  justify-content: space-between
+  align-items: center
+  padding: 5px
+  border-radius: 5px
+  background-color: lighten($primary, 25);
+  &-reg
+    display: inline-block
+  &:not(:last-child)
+    margin-bottom: 5px
+  &__remove
+    margin-left: 10px
+    width: 30px
+    height: 30px
+    background: transparent
+    border: 2px solid white
+    border-radius: 10px
+    display: flex
+    justify-content: center
+    align-items: center
+    cursor: pointer
+    flex-shrink: 0
+    &::before, &::after
+      position: absolute
+      content: ''
+      display: block
+      height: 2px
+      width: 18px
+      background: white
+    &::before
+      transform: rotate(45deg)
+    &::after
+      transform: rotate(-45deg)
+
+.modal
+  position: fixed
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
+  background: rgba(darken($primary, 35), 0.9)
+  display: flex
+  justify-content: center
+  align-items: center
+  visibility: hidden
+  &--active
+    visibility: visible
+		// .modal__dialog
+  &__dialog
+    position: relative
+    width: 300px
+    padding: 10px 20px
+    background: lighten($primary, 35)
+    border-radius: 10px
+  &__close
+    position: absolute
+    top: 10px
+    right: 20px
+    width: 30px
+    height: 30px
+    background: transparent
+    border: 2px solid black
+    border-radius: 10px
+    display: flex
+    justify-content: center
+    align-items: center
+    cursor: pointer
+    &::before, &::after
+      position: absolute
+      content: ''
+      display: block
+      height: 2px
+      width: 18px
+      background: black
+    &::before
+      transform: rotate(45deg)
+    &::after
+      transform: rotate(-45deg)
+
+.form
+  display: flex
+  flex-direction: column
+  button
+    margin-top: 5px
+.error
+  color: darken($primary,30)
+  margin-bottom: 10px
+
+.logout
+  display: none
+
+.button
+  cursor: pointer
+  min-width: 150px
+  font-size: 1rem
+  color: rgba(255, 255, 255, 0.9)
+  text-shadow: darken($primary, 15) 0 1px 2px
+  text-align: center
+  padding: 10px 0
+  border: 1px solid
+  border-color: $primary darken($primary, 20) darken($primary, 20) $primary
+  border-radius: 6px
+  outline: none
+  background: $primary linear-gradient(lighten($primary, 10), $primary 50%, darken($primary, 10))
+  box-shadow: inset rgba(255,255,255,.5) 1px 1px
+  &:hover
+    color: #ffffff
+    background-image: linear-gradient(lighten($primary, 15), lighten($primary, 5) 50%, darken($primary, 10))
+  &:active
+    color: #ffffff
+    border-color: darken($primary, 20)
+    background-image: linear-gradient(desaturate(darken($primary, 5), 10), desaturate($primary, 10))
+    box-shadow: none
