@@ -8,15 +8,38 @@ const isText = function (v) {
   return !(v === null || v.trim() === '' || !isNaN(parseFloat(v)));
 };
 
-// Сброс всех полей, вызываю при загрузке, чтобы предыдущие данные не оставались
-const resetInputs = function (elems) {
-  elems.forEach((item) => {
+const reset = function () {
+  appData.budget = 0;
+  appData.income = {};
+  appData.addIncome = [];
+  appData.incomeMonth = 0;
+  appData.expenses = {};
+  appData.addExpenses = [];
+  appData.expensesMonth = 0;
+  appData.budgetMonth = 0;
+  appData.budgetDay = 0;
+  appData.deposit = false;
+  appData.depositPercent = 0;
+  appData.depositAmount = 0;
+
+  Array.from(inputs).forEach((item) => {
     item.value = '';
-    periodSelectInput.value = 1;
-    depositCheck.checked = false;
-    checkSalaryAmount();
-    showPeriod();
+    item.disabled = item.classList.contains('result-total');
   });
+
+  periodSelectInput.value = 1;
+  depositCheck.checked = false;
+
+  [incomeItems, expensesItems].forEach((items) => {
+    Array.from(items)
+      .slice(1)
+      .forEach((item) => item.remove());
+  });
+
+  document.querySelectorAll('button').forEach((button) => (button.style.display = ''));
+
+  checkSalaryAmount();
+  showPeriod();
 };
 
 // Дизактивация/активация кнопки "Рассчитать" в зависимости от заполнения поля "Месячный доход"
@@ -60,12 +83,12 @@ const addInputListener = function (item, regExp) {
 
 // Переменные
 const startButton = document.getElementById('start'),
+  cancelButton = document.getElementById('cancel'),
   salaryAmountInput = document.querySelector('.salary-amount'),
   incomeItems = document.getElementsByClassName('income-items'),
-  incomeAddButton = document.getElementsByTagName('button')[0],
+  plusButtons = document.querySelectorAll('.btn_plus'),
   additionalIncomeItemInputs = document.querySelectorAll('.additional_income-item'),
   expensesItems = document.getElementsByClassName('expenses-items'),
-  expensesAddButton = document.getElementsByTagName('button')[1],
   additionalExpensesItemInput = document.querySelector('.additional_expenses-item'),
   depositCheck = document.querySelector('#deposit-check'),
   targetAmountInput = document.querySelector('.target-amount'),
@@ -78,7 +101,7 @@ const startButton = document.getElementById('start'),
   additionalExpensesValue = document.getElementsByClassName('additional_expenses-value')[0],
   incomePeriodValue = document.getElementsByClassName('income_period-value')[0],
   targetMonthValue = document.getElementsByClassName('target_month-value')[0],
-  inputs = document.querySelectorAll('input'),
+  inputs = document.getElementsByTagName('input'),
   regExp = { patternText: /[а-яА-ЯёЁ\p{P} ]/u, patternDigits: /\d/ };
 
 const appData = {
@@ -95,56 +118,32 @@ const appData = {
   depositPercent: 0,
   depositAmount: 0,
   start: function () {
-    //Обнуление объекта при каждом новом расчете
-    appData.budget = 0;
-    appData.income = {};
-    appData.addIncome = [];
-    appData.incomeMonth = 0;
-    appData.expenses = {};
-    appData.addExpenses = [];
-    appData.expensesMonth = 0;
-    appData.budgetMonth = 0;
-    appData.budgetDay = 0;
-    appData.deposit = false;
-    appData.depositPercent = 0;
-    appData.depositAmount = 0;
-
     if (!isNumber(salaryAmountInput.value)) {
       alert('Ошибка, "Месячный доход" должен быть числом!');
       return;
     }
-    appData.budget = +salaryAmountInput.value;
+    this.budget = +salaryAmountInput.value;
 
-    appData.getIncome();
-    appData.getExpenses();
-    appData.getAddIncome();
-    appData.getAddExpenses();
+    this.getIncome();
+    this.getExpenses();
+    this.getAddIncome();
+    this.getAddExpenses();
 
-    appData.getBudget();
-    appData.showResult();
+    this.getBudget();
+    this.showResult();
   },
 
-  addIncomeBlock: function () {
-    const incomeItemClone = incomeItems[0].cloneNode(true);
-    Array.from(incomeItemClone.children).forEach((item) => {
+  addInputsBlock: function () {
+    const count = 1; // Нужный максимум - 2 (для 3: 3 - 2 = 1)
+    const inputItems = Array.from(this.parentElement.children).filter((item) => item.className.match(/-items/));
+    const inputItemClone = inputItems[0].cloneNode(true);
+    Array.from(inputItemClone.children).forEach((item) => {
       item.value = '';
       addInputListener(item, regExp);
     });
-    incomeAddButton.before(incomeItemClone);
-    if (incomeItems.length > 2) {
-      incomeAddButton.style.display = 'none';
-    }
-  },
-
-  addExpensesBlock: function () {
-    const expensesItemClone = expensesItems[0].cloneNode(true);
-    Array.from(expensesItemClone.children).forEach((item) => {
-      item.value = '';
-      addInputListener(item, regExp);
-    });
-    expensesAddButton.before(expensesItemClone);
-    if (expensesItems.length > 2) {
-      expensesAddButton.style.display = 'none';
+    this.before(inputItemClone);
+    if (inputItems.length > count) {
+      this.style.display = 'none';
     }
   },
 
@@ -153,7 +152,7 @@ const appData = {
       const incomeTitleValue = item.querySelector('.income-title').value,
         incomeAmountValue = item.querySelector('.income-amount').value;
       if (incomeTitleValue !== '' && incomeAmountValue !== '') {
-        appData.income[incomeTitleValue.trim()] = +incomeAmountValue;
+        this.income[incomeTitleValue.trim()] = +incomeAmountValue;
       }
     });
 
@@ -168,7 +167,7 @@ const appData = {
     additionalIncomeItemInputs.forEach((item) => {
       const itemValue = item.value.trim();
       if (itemValue !== '') {
-        appData.addIncome.push(itemValue);
+        this.addIncome.push(itemValue);
       }
     });
   },
@@ -178,7 +177,7 @@ const appData = {
       const expensesTitleValue = item.querySelector('.expenses-title').value,
         expensesAmountValue = item.querySelector('.expenses-amount').value;
       if (expensesTitleValue !== '' && expensesAmountValue !== '') {
-        appData.expenses[expensesTitleValue.trim()] = +expensesAmountValue;
+        this.expenses[expensesTitleValue.trim()] = +expensesAmountValue;
       }
     });
 
@@ -215,17 +214,16 @@ const appData = {
   },
 
   showResult: function () {
-    budgetMonthValue.value = appData.budgetMonth;
-    budgetDayValue.value = Math.floor(appData.budgetDay);
-    expensesMonthValue.value = appData.expensesMonth;
-    additionalIncomeValue.value = appData.addIncome.join(', ');
-    additionalExpensesValue.value = appData.addExpenses.join(', ');
-    incomePeriodValue.value = appData.calcSavedMoney();
+    budgetMonthValue.value = this.budgetMonth;
+    budgetDayValue.value = Math.floor(this.budgetDay);
+    expensesMonthValue.value = this.expensesMonth;
+    additionalIncomeValue.value = this.addIncome.join(', ');
+    additionalExpensesValue.value = this.addExpenses.join(', ');
+    incomePeriodValue.value = this.calcSavedMoney();
     periodSelectInput.addEventListener('input', () => {
-      incomePeriodValue.value = appData.calcSavedMoney();
+      incomePeriodValue.value = this.calcSavedMoney();
     });
-    targetMonthValue.value =
-      appData.getTargetMonth() < 0 ? 'Цель не будет достигнута' : Math.ceil(appData.getTargetMonth());
+    targetMonthValue.value = this.getTargetMonth() < 0 ? 'Цель не будет достигнута' : Math.ceil(this.getTargetMonth());
   },
 
   // Старые методы, пока не используем
@@ -258,12 +256,26 @@ const appData = {
 };
 
 // Сброс при запуске и слушатели
-resetInputs(inputs);
+reset();
 salaryAmountInput.addEventListener('input', checkSalaryAmount);
-startButton.addEventListener('click', appData.start);
-incomeAddButton.addEventListener('click', appData.addIncomeBlock);
-expensesAddButton.addEventListener('click', appData.addExpensesBlock);
+startButton.addEventListener('click', () => {
+  appData.start();
+
+  Array.from(inputs)
+    .filter((item) => item.type === 'text')
+    .forEach((item) => (item.disabled = true));
+
+  event.target.style.display = 'none';
+
+  cancelButton.style.display = 'block';
+  cancelButton.addEventListener('click', reset);
+});
+
+plusButtons.forEach((button) => {
+  button.addEventListener('click', appData.addInputsBlock);
+});
+
 periodSelectInput.addEventListener('input', showPeriod);
-inputs.forEach((item) => {
+Array.from(inputs).forEach((item) => {
   addInputListener(item, regExp);
 });
