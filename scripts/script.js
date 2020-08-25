@@ -8,40 +8,6 @@ const isText = function (v) {
   return !(v === null || v.trim() === '' || !isNaN(parseFloat(v)));
 };
 
-const reset = function () {
-  appData.budget = 0;
-  appData.income = {};
-  appData.addIncome = [];
-  appData.incomeMonth = 0;
-  appData.expenses = {};
-  appData.addExpenses = [];
-  appData.expensesMonth = 0;
-  appData.budgetMonth = 0;
-  appData.budgetDay = 0;
-  appData.deposit = false;
-  appData.depositPercent = 0;
-  appData.depositAmount = 0;
-
-  Array.from(inputs).forEach((item) => {
-    item.value = '';
-    item.disabled = item.classList.contains('result-total');
-  });
-
-  periodSelectInput.value = 1;
-  depositCheck.checked = false;
-
-  [incomeItems, expensesItems].forEach((items) => {
-    Array.from(items)
-      .slice(1)
-      .forEach((item) => item.remove());
-  });
-
-  document.querySelectorAll('button').forEach((button) => (button.style.display = ''));
-
-  checkSalaryAmount();
-  showPeriod();
-};
-
 // Дизактивация/активация кнопки "Рассчитать" в зависимости от заполнения поля "Месячный доход"
 const checkSalaryAmount = function () {
   if (salaryAmountInput.value === '') {
@@ -132,7 +98,49 @@ const appData = {
     this.getBudget();
     this.showResult();
   },
+  reset: function (inputs, itemsArr) {
+    this.budget = 0;
+    this.income = {};
+    this.addIncome = [];
+    this.incomeMonth = 0;
+    this.expenses = {};
+    this.addExpenses = [];
+    this.expensesMonth = 0;
+    this.budgetMonth = 0;
+    this.budgetDay = 0;
+    this.deposit = false;
+    this.depositPercent = 0;
+    this.depositAmount = 0;
 
+    Array.from(inputs).forEach((item) => {
+      switch (item.type) {
+        case 'text': {
+          item.value = '';
+          item.disabled = item.classList.contains('result-total');
+          break;
+        }
+        case 'range': {
+          item.value = 1;
+          break;
+        }
+        case 'checkbox': {
+          item.checked = false;
+          break;
+        }
+      }
+    });
+
+    itemsArr.forEach((items) => {
+      Array.from(items)
+        .slice(1)
+        .forEach((item) => item.remove());
+    });
+
+    document.querySelectorAll('button').forEach((button) => (button.style.display = ''));
+
+    checkSalaryAmount();
+    showPeriod();
+  },
   addInputsBlock: function () {
     const count = 1; // Нужный максимум - 2 (для 3: 3 - 2 = 1)
     const inputItems = Array.from(this.parentElement.children).filter((item) => item.className.match(/-items/));
@@ -256,7 +264,7 @@ const appData = {
 };
 
 // Сброс при запуске и слушатели
-reset();
+appData.reset(inputs, [incomeItems, expensesItems]);
 salaryAmountInput.addEventListener('input', checkSalaryAmount);
 startButton.addEventListener('click', () => {
   appData.start();
@@ -268,7 +276,9 @@ startButton.addEventListener('click', () => {
   event.target.style.display = 'none';
 
   cancelButton.style.display = 'block';
-  cancelButton.addEventListener('click', reset);
+  cancelButton.addEventListener('click', () => {
+    appData.reset(inputs, [incomeItems, expensesItems]);
+  });
 });
 
 plusButtons.forEach((button) => {
