@@ -6,10 +6,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JavaScript 14</title>
   <script src="scripts/script.js" defer></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 14px;
+    }
+
+    main {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 15vh;
+    }
+
+    h1 {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      color: white;
+      text-shadow: black 1px 1px 0, black -1px -1px 0,
+        black -1px 1px 0, black 1px -1px 0;
+    }
+
+    button {
+      width: 300px;
+      height: 8rem;
+      font-size: 3.5rem;
+      font-weight: bold;
+      background-color: white;
+      text-shadow: black 1px 1px 0, black -1px -1px 0,
+        black -1px 1px 0, black 1px -1px 0;
+    }
+  </style>
 </head>
 
 <body>
-
+  <main id="main-block">
+    <h1 id="color-text"></h1>
+    <button id="change">New Color</button>
+  </main>
 </body>
 
 </html>
