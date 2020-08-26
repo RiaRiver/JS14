@@ -42,15 +42,36 @@ DomElement.prototype.insertDomElement = function () {
   document.body.append(newElement);
 };
 
-const testElem1 = new DomElement('#test-elem', 'Test Elem 1', '100px', '300px', 'greenyellow', '20px');
-testElem1.insertDomElement();
+const square = new DomElement('.square', '', '100px', '100px', 'green');
+square.position = 'absolute';
 
-const testElem2 = new DomElement(
-  '.test-elem',
-  'Test Elem 2',
-  '300px',
-  '600px',
-  'center / cover no-repeat url("https://i.pinimg.com/736x/78/2b/49/782b49d8c709e79ba6f447290419fd88.jpg")',
-  '30px'
-);
-testElem2.insertDomElement();
+const handler = function () {
+  this.insertDomElement();
+  let elem = document.querySelector(this.selector);
+  elem.style.position = this.position;
+};
+
+const move = function () {
+  let elem = document.querySelector(this.selector);
+  switch (event.key) {
+    case 'ArrowUp': {
+      elem.style.top = `${elem.offsetTop - 10}px`;
+      break;
+    }
+    case 'ArrowRight': {
+      elem.style.left = `${elem.offsetLeft + 10}px`;
+      break;
+    }
+    case 'ArrowDown': {
+      elem.style.top = `${elem.offsetTop + 10}px`;
+      break;
+    }
+    case 'ArrowLeft': {
+      elem.style.left = `${elem.offsetLeft - 10}px`;
+      break;
+    }
+  }
+};
+
+document.addEventListener('DOMContentLoaded', handler.bind(square));
+document.addEventListener('keydown', move.bind(square));
