@@ -8,45 +8,6 @@ const isText = function (v) {
   return !(v === null || v.trim() === '' || !isNaN(parseFloat(v)));
 };
 
-// Дизактивация/активация кнопки "Рассчитать" в зависимости от заполнения поля "Месячный доход"
-const checkSalaryAmount = function () {
-  if (salaryAmountInput.value === '') {
-    startButton.disabled = true;
-    startButton.style.cursor = 'not-allowed';
-  } else {
-    startButton.disabled = false;
-    startButton.style.cursor = '';
-  }
-};
-
-// Изменение цифры под полем "Период расчета"
-const showPeriod = function () {
-  periodAmount.textContent = periodSelectInput.value;
-};
-
-// Контроль ввода в поле
-const allowInput = function (event, pattern) {
-  if (pattern.test(event.key) || event.key.length > 1 || event.ctrlKey) {
-    return;
-  } else {
-    event.preventDefault();
-  }
-};
-
-// Добавление слушателя на Input
-const addInputListener = function (item, regExp) {
-  if (item.placeholder === 'Наименование') {
-    item.addEventListener('keydown', (event) => {
-      allowInput(event, regExp.patternText);
-    });
-  }
-  if (item.placeholder === 'Сумма') {
-    item.addEventListener('keydown', (event) => {
-      allowInput(event, regExp.patternDigits);
-    });
-  }
-};
-
 // Переменные
 const startButton = document.getElementById('start'),
   cancelButton = document.getElementById('cancel'),
@@ -140,22 +101,26 @@ AppData.prototype.reset = function (inputs, itemsArr) {
       .forEach((item) => item.remove());
   });
 
-  document.querySelectorAll('button').forEach((button) => (button.style.display = ''));
+  document.querySelectorAll('button').forEach((button) => {
+    button.style.display = '';
+    button.disabled = '';
+    button.style.cursor = '';
+  });
 
-  checkSalaryAmount();
-  showPeriod();
+  this.checkSalaryAmount();
+  this.showPeriod();
 };
 AppData.prototype.addInputsBlock = function () {
   const count = 1; // Нужный максимум - 2 (для 3: 3 - 2 = 1)
-  const inputItems = Array.from(this.parentElement.children).filter((item) => item.className.match(/-items/));
+  const inputItems = Array.from(event.target.parentElement.children).filter((item) => item.className.match(/-items/));
   const inputItemClone = inputItems[0].cloneNode(true);
   Array.from(inputItemClone.children).forEach((item) => {
     item.value = '';
-    addInputListener(item, regExp);
+    this.addInputListener(item, regExp);
   });
-  this.before(inputItemClone);
+  event.target.before(inputItemClone);
   if (inputItems.length > count) {
-    this.style.display = 'none';
+    event.target.style.display = 'none';
   }
 };
 
@@ -266,32 +231,78 @@ AppData.prototype.getStatusIncome = function () {
   }
 };
 
+// Дизактивация/активация кнопки "Рассчитать" в зависимости от заполнения поля "Месячный доход"
+AppData.prototype.checkSalaryAmount = function () {
+  if (salaryAmountInput.value === '') {
+    startButton.disabled = true;
+    startButton.style.cursor = 'not-allowed';
+  } else {
+    startButton.disabled = false;
+    startButton.style.cursor = '';
+  }
+};
+
+// Изменение цифры под полем "Период расчета"
+AppData.prototype.showPeriod = function () {
+  periodAmount.textContent = periodSelectInput.value;
+};
+
+// Контроль ввода в поле
+AppData.prototype.allowInput = function (event, pattern) {
+  if (pattern.test(event.key) || event.key.length > 1 || event.ctrlKey) {
+    return;
+  } else {
+    event.preventDefault();
+  }
+};
+
+// Добавление слушателя на Input
+AppData.prototype.addInputListener = function (item, regExp) {
+  if (item.placeholder === 'Наименование') {
+    item.addEventListener('keydown', (event) => {
+      this.allowInput(event, regExp.patternText);
+    });
+  }
+  if (item.placeholder === 'Сумма') {
+    item.addEventListener('keydown', (event) => {
+      this.allowInput(event, regExp.patternDigits);
+    });
+  }
+};
+
+AppData.prototype.setEventsListeners = function () {
+  salaryAmountInput.addEventListener('input', this.checkSalaryAmount);
+  startButton.addEventListener('click', () => {
+    this.start();
+
+    Array.from(inputs)
+      .filter((item) => item.type === 'text')
+      .forEach((item) => (item.disabled = true));
+
+    plusButtons.forEach((button) => {
+      button.disabled = true;
+      button.style.cursor = 'not-allowed';
+    });
+    event.target.style.display = 'none';
+
+    cancelButton.style.display = 'block';
+    cancelButton.addEventListener('click', () => {
+      this.reset(inputs, [incomeItems, expensesItems]);
+    });
+  });
+
+  plusButtons.forEach((button) => {
+    button.addEventListener('click', this.addInputsBlock.bind(this));
+  });
+
+  periodSelectInput.addEventListener('input', this.showPeriod);
+  Array.from(inputs).forEach((item) => {
+    this.addInputListener(item, regExp);
+  });
+};
+
 const appData = new AppData();
 
 // Сброс при запуске и слушатели
-
 appData.reset(inputs, [incomeItems, expensesItems]);
-salaryAmountInput.addEventListener('input', checkSalaryAmount);
-startButton.addEventListener('click', () => {
-  appData.start();
-
-  Array.from(inputs)
-    .filter((item) => item.type === 'text')
-    .forEach((item) => (item.disabled = true));
-
-  event.target.style.display = 'none';
-
-  cancelButton.style.display = 'block';
-  cancelButton.addEventListener('click', () => {
-    appData.reset(inputs, [incomeItems, expensesItems]);
-  });
-});
-
-plusButtons.forEach((button) => {
-  button.addEventListener('click', appData.addInputsBlock);
-});
-
-periodSelectInput.addEventListener('input', showPeriod);
-Array.from(inputs).forEach((item) => {
-  addInputListener(item, regExp);
-});
+appData.setEventsListeners();
