@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript 14 Logic 1</title>
+  <script src="scripts/script.js" defer></script>
+  <style>
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      padding-top: 30px;
+      width: 95%;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    input {
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: green;
+      font-size: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <div class="container">
+      <form>
+        <input id="amount" type='text' placeholder="Сумма" required>
+        <input id="quantity" type='number' placeholder="Количество" required min="1">
+        <input id="promo" type='text' placeholder="Промокод">
+        <button id='calc'>Рассчитать сумму со скидкой</button>
+      </form>
+      <p>Сумма со скидкой: <span id='disc-amount'></p>
+    </div>
+  </main>
+</body>
+
+</html>
