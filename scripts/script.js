@@ -54,10 +54,8 @@ class AppData {
     }
     this.budget = +salaryAmountInput.value;
 
-    this.getIncome();
-    this.getExpenses();
-    this.getAddIncome();
-    this.getAddExpenses();
+    this.getIncomesAndExpenses([incomeItems, expensesItems]);
+    this.getAddIncomesAndExpenses([additionalIncomeItemInputs, additionalExpensesItemInput]);
 
     this.getBudget();
     this.showResult();
@@ -124,57 +122,47 @@ class AppData {
     }
   }
 
-  getIncome() {
-    Array.from(incomeItems).forEach((item) => {
-      const incomeTitleValue = item.querySelector('.income-title').value,
-        incomeAmountValue = item.querySelector('.income-amount').value;
-      if (incomeTitleValue !== '' && incomeAmountValue !== '') {
-        this.income[incomeTitleValue.trim()] = +incomeAmountValue;
-      }
-    });
-
-    for (const key in this.income) {
-      if (isNumber(this.income[key])) {
-        this.incomeMonth += this.income[key];
-      }
-    }
-  }
-
-  getAddIncome() {
-    additionalIncomeItemInputs.forEach((item) => {
-      const itemValue = item.value.trim();
-      if (itemValue !== '') {
-        this.addIncome.push(itemValue);
+  getIncomesAndExpenses(itemBlocks) {
+    itemBlocks.forEach((block) => {
+      const itemType = block[0].className.split('-')[0];
+      Array.from(block).forEach((item) => {
+        const itemTitleValue = item.querySelector(`.${itemType}-title`).value,
+          itemAmountValue = item.querySelector(`.${itemType}-amount`).value;
+        if (itemTitleValue !== '' && itemAmountValue !== '') {
+          this[itemType][itemTitleValue.trim()] = +itemAmountValue;
+        }
+      });
+      for (const key in this[itemType]) {
+        if (isNumber(this[itemType][key])) {
+          this[`${itemType}Month`] += this[itemType][key];
+        }
       }
     });
   }
+  getAddIncomesAndExpenses(inputBlocks) {
+    inputBlocks.forEach((block) => {
+      let values = [];
+      let itemType;
 
-  getExpenses() {
-    Array.from(expensesItems).forEach((item) => {
-      const expensesTitleValue = item.querySelector('.expenses-title').value,
-        expensesAmountValue = item.querySelector('.expenses-amount').value;
-      if (expensesTitleValue !== '' && expensesAmountValue !== '') {
-        this.expenses[expensesTitleValue.trim()] = +expensesAmountValue;
+      const getItemType = (item) => {
+        return item.className.match(/_(.*)-/)[1];
+      };
+
+      if (typeof block[Symbol.iterator] === 'function') {
+        itemType = getItemType(block[0]);
+
+        block.forEach((item) => {
+          values.push(item.value);
+        });
+      } else {
+        itemType = getItemType(block);
+        values = block.value.split(',');
       }
+
+      itemType = `${itemType[0].toUpperCase()}${itemType.slice(1)}`;
+      values = values.map((item) => item.trim()).filter((item) => item !== '');
+      this[`add${itemType}`] = values;
     });
-
-    for (const key in this.expenses) {
-      if (isNumber(this.expenses[key])) {
-        this.expensesMonth += this.expenses[key];
-      }
-    }
-  }
-
-  getAddExpenses() {
-    this.addExpenses = additionalExpensesItemInput.value.split(',');
-    this.addExpenses = this.addExpenses.map((item) => item.trim()).filter((item) => item !== '');
-    // Пока оставлю, может пригодится еще
-    // appData.addExpenses
-    // .map((item) => {
-    //   return `${item[0].toUpperCase()}${item.slice(1)}`;
-    // })
-    // .join(', ')
-    //   .toLocaleLowerCase()
   }
 
   getBudget() {
