@@ -3,6 +3,7 @@
 
 // Timer
 function countTimer(deadline, { hours, minutes, seconds }) {
+  let timerInterval = null;
   // Получение оставшегося времени
   function getTimeRemaining() {
     const dateStop = new Date(deadline).getTime(),
@@ -31,7 +32,7 @@ function countTimer(deadline, { hours, minutes, seconds }) {
     seconds.textContent = String(timer.seconds).padStart(2, '0');
   }
   updateTimer();
-  const timerInterval = setInterval(updateTimer, 1000);
+  timerInterval = setInterval(updateTimer, 1000);
 }
 
 // Получение элементов и запуск таймера
