@@ -45,10 +45,12 @@ countTimer('03 september 2020 08:15:30', { hours, minutes, seconds });
 const scrollToElem = elem => {
   elem.scrollIntoView({ behavior: 'smooth' });
 };
-// TODO В функции toggleMenu() много обработчиков событий. Используя делегирование событий, сделать обработчики для:
+
+// TODO[done] В функции toggleMenu() много обработчиков событий. Используя делегирование событий, сделать обработчики для:
 // -  Крестика закрытия меню и пунктов меню.
 // -  На кнопку меню.
 // У вас должно быть максимум 2 обработчика события в  функции toggleMenu()
+
 // Меню
 const toggleMenu = (menuButton, menu) => {
   const handlerMenu = () => {
@@ -128,14 +130,9 @@ const togglePopUp = (popupButtons, popUp) => {
   });
 
   popUp.addEventListener('click', event => {
-    let target = event.target;
-    if (target.classList.contains('popup-close')) {
+    const target = event.target;
+    if (target === closeButton || target === popUp) {
       closePopUp();
-    } else {
-      target = target.closest('.popup-content');
-      if (!target) {
-        closePopUp();
-      }
     }
   });
 };
@@ -145,43 +142,40 @@ const popUp = document.querySelector('.popup'),
   popupButtons = document.querySelectorAll('.popup-btn');
 togglePopUp(popupButtons, popUp);
 
-const scrollDownButton = document.querySelector('[href = "#service-block"]');
-const scrollDownTarget = document.querySelector('#service-block');
+// Настройка кнопки "Вниз"
+const scrollDownButton = document.querySelector('[href = "#service-block"]'),
+  scrollDownTarget = document.querySelector('#service-block');
 scrollDownButton.addEventListener('click', event => {
   event.preventDefault();
   scrollToElem(scrollDownTarget);
 });
 
 // TODO[done] Реализовать табы по видео.
+
 // Табы
-const controlTabs = (tabHeader, tabs, tabContents) => {
-  const changeTabContent = index => {
-    for (let i = 0; i < tabContents.length; i++) {
-      if (i === index) {
+const controlTabs = (tabHeader, tabSelector, tabContents) => {
+  const tabs = tabHeader.querySelectorAll(tabSelector);
+  const changeTabContent = currentTab => {
+    tabs.forEach((tab, i) => {
+      if (tab === currentTab) {
         tabs[i].classList.add('active');
         tabContents[i].classList.remove('d-none');
       } else {
         tabs[i].classList.remove('active');
         tabContents[i].classList.add('d-none');
       }
-    }
+    });
   };
 
   tabHeader.addEventListener('click', event => {
-    let target = event.target;
-    target = target.closest('.service-header-tab');
-
-    if (target) {
-      tabs.forEach((tab, i) => {
-        if (tab === target) {
-          changeTabContent(i);
-        }
-      });
+    const currentTab = event.target.closest(tabSelector);
+    if (currentTab) {
+      changeTabContent(currentTab);
     }
   });
 };
 
+// Получение блока с табами и блоков с контентом, вызов функции управления переключения табов
 const tabHeader = document.querySelector('.service-header'),
-  tabs = tabHeader.querySelectorAll('.service-header-tab'),
   tabContents = document.querySelectorAll('.service-tab');
-controlTabs(tabHeader, tabs, tabContents);
+controlTabs(tabHeader, '.service-header-tab', tabContents);
