@@ -46,24 +46,32 @@ const scrollToElem = elem => {
   elem.scrollIntoView({ behavior: 'smooth' });
 };
 
-// TODO[done] В функции toggleMenu() много обработчиков событий. Используя делегирование событий, сделать обработчики для:
-// -  Крестика закрытия меню и пунктов меню.
-// -  На кнопку меню.
-// У вас должно быть максимум 2 обработчика события в  функции toggleMenu()
+// TODO[done] Написать 1 обработчик для всех событий внутри функции toggleMenu()
+// TODO[done] Реализовать следующий функционал: если клик произошел мимо меню, оно закрывается
 
 // Меню
-const toggleMenu = (menuButton, menu) => {
+const toggleMenu = (menuButtonSelector, menuSelector) => {
+  const menu = document.querySelector(menuSelector);
+
   const handlerMenu = () => {
     menu.classList.toggle('active-menu');
   };
 
-  menuButton.addEventListener('click', handlerMenu);
+  document.addEventListener('click', event => {
+    const target = event.target,
+      isMenuActive = menu.classList.contains('active-menu'),
+      targetIsMenu = target.closest(menuSelector),
+      targetIsMenuButton = target.closest(menuButtonSelector);
 
-  menu.addEventListener('click', event => {
-    if (event.target.tagName === 'A') {
+    if (targetIsMenuButton || (isMenuActive && !targetIsMenu)) {
+      handlerMenu();
+      return;
+    }
+
+    if (targetIsMenu && target.matches('a')) {
       handlerMenu();
       event.preventDefault();
-      const hash = event.target.hash;
+      const hash = target.hash;
       if (hash !== '#close') {
         scrollToElem(document.querySelector(hash));
       }
@@ -71,10 +79,8 @@ const toggleMenu = (menuButton, menu) => {
   });
 };
 
-// Получение кнопки открытия меню и элемента меню, вызов функции управления меню
-const menuButton = document.querySelector('.menu'),
-  menu = document.querySelector('menu');
-toggleMenu(menuButton, menu);
+// Вызов функции управления меню
+toggleMenu('.menu', 'menu');
 
 // Паттерн анимации
 function animate({ timing, draw, duration }) {
@@ -149,8 +155,6 @@ scrollDownButton.addEventListener('click', event => {
   event.preventDefault();
   scrollToElem(scrollDownTarget);
 });
-
-// TODO[done] Реализовать табы по видео.
 
 // Табы
 const controlTabs = (tabHeader, tabSelector, tabContents) => {
