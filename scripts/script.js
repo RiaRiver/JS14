@@ -42,6 +42,11 @@ const minutes = document.querySelector('#timer-minutes');
 const seconds = document.querySelector('#timer-seconds');
 countTimer('03 september 2020 08:15:30', { hours, minutes, seconds });
 
+// TODO[done] Написать скрипт плавной прокрутки страницы при клике на элементы меню, используя чистый JS
+const scrollToElem = elem => {
+  elem.scrollIntoView({ behavior: 'smooth' });
+};
+
 // TODO[done] Написать скрипт Меню и модального окна по видео
 // Меню
 const toggleMenu = (menuButton, menu) => {
@@ -54,6 +59,11 @@ const toggleMenu = (menuButton, menu) => {
   menu.addEventListener('click', event => {
     if (event.target.tagName === 'A') {
       handlerMenu();
+      event.preventDefault();
+      const hash = event.target.hash;
+      if (hash !== '#close') {
+        scrollToElem(document.querySelector(hash));
+      }
     }
   });
 };
@@ -128,3 +138,13 @@ const togglePopup = (popupButtons, popup) => {
 const popup = document.querySelector('.popup'),
   popupButtons = document.querySelectorAll('.popup-btn');
 togglePopup(popupButtons, popup);
+
+
+// TODO[done] На первом слайде так же есть КНОПКА, нажав на которую мы должны плавно переместится на следующий слайд
+
+const scrollDownButton = document.querySelector('[href = "#service-block"]');
+const scrollDownTarget = document.querySelector('#service-block');
+scrollDownButton.addEventListener('click', event => {
+  event.preventDefault();
+  scrollToElem(scrollDownTarget);
+});
