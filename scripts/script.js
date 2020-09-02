@@ -42,12 +42,13 @@ const minutes = document.querySelector('#timer-minutes');
 const seconds = document.querySelector('#timer-seconds');
 countTimer('03 september 2020 08:15:30', { hours, minutes, seconds });
 
-// TODO[done] Написать скрипт плавной прокрутки страницы при клике на элементы меню, используя чистый JS
 const scrollToElem = elem => {
   elem.scrollIntoView({ behavior: 'smooth' });
 };
-
-// TODO[done] Написать скрипт Меню и модального окна по видео
+// TODO В функции toggleMenu() много обработчиков событий. Используя делегирование событий, сделать обработчики для:
+// -  Крестика закрытия меню и пунктов меню.
+// -  На кнопку меню.
+// У вас должно быть максимум 2 обработчика события в  функции toggleMenu()
 // Меню
 const toggleMenu = (menuButton, menu) => {
   const handlerMenu = () => {
@@ -73,10 +74,6 @@ const menuButton = document.querySelector('.menu'),
   menu = document.querySelector('menu');
 toggleMenu(menuButton, menu);
 
-// TODO[done] Написать анимацию появления модального окна
-// Использовать JS анимацию. Использовать нативный JavaScript. Использование сторонних библиотек запрещено!
-// Необходимо манипулировать элементами посредством JS. СSS анимация не подходит.
-
 // Паттерн анимации
 function animate({ timing, draw, duration }) {
   const start = performance.now();
@@ -97,15 +94,13 @@ function animate({ timing, draw, duration }) {
   });
 }
 
-// TODO[done] Если пользователь заходит на сайт с устройства, у которого ширина экрана меньше 768px (мобильного устройства) - анимация отключается
-
-// Popup
-const togglePopup = (popupButtons, popup) => {
-  const closeButton = popup.querySelector('.popup-close');
+// PopUp
+const togglePopUp = (popupButtons, popUp) => {
+  const closeButton = popUp.querySelector('.popup-close');
 
   // Открытие модального окна
-  const openPopup = () => {
-    popup.style.display = 'block';
+  const openPopUp = () => {
+    popUp.style.display = 'block';
 
     // Анимация на экранах больше 768px шириной
     if (innerWidth > 768) {
@@ -115,32 +110,40 @@ const togglePopup = (popupButtons, popup) => {
           return timeFraction;
         },
         draw(progress) {
-          popup.style.opacity = progress;
+          popUp.style.opacity = progress;
         }
       });
     }
   };
 
   // Закрытие модального окна
-  const closePopup = () => {
-    popup.style.display = '';
-    popup.style.opacity = '';
+  const closePopUp = () => {
+    popUp.style.display = '';
+    popUp.style.opacity = '';
   };
 
   // Слушатели на управляющие кнопки
   popupButtons.forEach(button => {
-    button.addEventListener('click', openPopup);
+    button.addEventListener('click', openPopUp);
   });
-  closeButton.addEventListener('click', closePopup);
+
+  popUp.addEventListener('click', event => {
+    let target = event.target;
+    if (target.classList.contains('popup-close')) {
+      closePopUp();
+    } else {
+      target = target.closest('.popup-content');
+      if (!target) {
+        closePopUp();
+      }
+    }
+  });
 };
 
 // Получение кнопок открытия модалок и элемента модального окна, вызов функции управления модальными окнами
-const popup = document.querySelector('.popup'),
+const popUp = document.querySelector('.popup'),
   popupButtons = document.querySelectorAll('.popup-btn');
-togglePopup(popupButtons, popup);
-
-
-// TODO[done] На первом слайде так же есть КНОПКА, нажав на которую мы должны плавно переместится на следующий слайд
+togglePopUp(popupButtons, popUp);
 
 const scrollDownButton = document.querySelector('[href = "#service-block"]');
 const scrollDownTarget = document.querySelector('#service-block');
@@ -148,3 +151,37 @@ scrollDownButton.addEventListener('click', event => {
   event.preventDefault();
   scrollToElem(scrollDownTarget);
 });
+
+// TODO[done] Реализовать табы по видео.
+// Табы
+const controlTabs = (tabHeader, tabs, tabContents) => {
+  const changeTabContent = index => {
+    for (let i = 0; i < tabContents.length; i++) {
+      if (i === index) {
+        tabs[i].classList.add('active');
+        tabContents[i].classList.remove('d-none');
+      } else {
+        tabs[i].classList.remove('active');
+        tabContents[i].classList.add('d-none');
+      }
+    }
+  };
+
+  tabHeader.addEventListener('click', event => {
+    let target = event.target;
+    target = target.closest('.service-header-tab');
+
+    if (target) {
+      tabs.forEach((tab, i) => {
+        if (tab === target) {
+          changeTabContent(i);
+        }
+      });
+    }
+  });
+};
+
+const tabHeader = document.querySelector('.service-header'),
+  tabs = tabHeader.querySelectorAll('.service-header-tab'),
+  tabContents = document.querySelectorAll('.service-tab');
+controlTabs(tabHeader, tabs, tabContents);
