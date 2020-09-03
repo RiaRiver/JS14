@@ -186,66 +186,100 @@ controlTabs(tabHeader, '.service-header-tab', tabContents);
 // TODO Написать скрипт, который будет на страницу добавлять точки с классом dot равному количеству слайдов
 
 // Слайдер
-const slider = () => {
-  const slides = document.querySelectorAll('.portfolio-item');
-  const sliderButtons = document.querySelectorAll('.portfolio-btn');
-  const dots = document.querySelectorAll('.dot');
-  const sliderContainer = document.querySelector('.portfolio-content');
+// Слайдер получает параметры: селектор контейнера, класс слайда, суффикс для классов активных слайда и точки,
+// селекторы кнопок назад и вперед, флаг автопроигрывания (по умолчанию включено), период смены слайда (по умолчанию 3 секунды)
+const slider = (sliderContainerSelector, slideClass, activeSuffix, dotClass, prevButtonSelector, nextButtonSelector, autoPlay = true, changeTime = 2000) => {
+  const sliderContainer = document.querySelector(sliderContainerSelector),
+    slides = document.getElementsByClassName(slideClass),
+    dots = document.getElementsByClassName(dotClass),
+    controlsSelectors = `${prevButtonSelector},${nextButtonSelector},.${dotClass}`;
+
   let currentSlide = 0,
     interval;
 
-  const prevSlide = (elem, index, strClass) => {
-    elem[index].classList.remove(strClass);
-  };
-  const nextSlide =  (elem, index, strClass)  => {
-    elem[index].classList.add(strClass);
-  };
-  const autoPlaySlide = () => {
-    prevSlide(slides, currentSlide, 'portfolio-item-active');
-    prevSlide(dots, currentSlide, 'dot-active');
-    currentSlide++;
+  // Исправление выхода текущего индекса за пределы количества слайдов
+  const fixSliderOverflow = () => {
     if (currentSlide >= slides.length) currentSlide = 0;
-    nextSlide(slides, currentSlide, 'portfolio-item-active');
-    nextSlide(dots, currentSlide, 'dot-active');
+    if (currentSlide < 0) currentSlide = slides.length - 1;
   };
-  const startSlider = (time = 3000) => {
-    interval = setInterval(autoPlaySlide, time);
+
+  // Дизактивация слайда ( и соответствующей точки)
+  const disactivateSlide = index => {
+    slides[index].classList.remove(`${slideClass}${activeSuffix}`);
+    dots[index].classList.remove(`${dotClass}${activeSuffix}`);
   };
-  const stopSlider = () => {
+
+  // Активация слайда ( и соответствующей точки)
+  const activateSlide =  index  => {
+    slides[index].classList.add(`${slideClass}${activeSuffix}`);
+    dots[index].classList.add(`${dotClass}${activeSuffix}`);
+  };
+
+  // Смена слайда на следующий
+  const changeSlideToNext = () => {
+    disactivateSlide(currentSlide);
+    currentSlide++;
+    fixSliderOverflow();
+    activateSlide(currentSlide);
+  };
+
+  // Запуск авпосмены слайдов
+  const startAutoPlay = () => {
+    if (autoPlay) interval = setInterval(changeSlideToNext, changeTime);
+  };
+
+  // Остановка автосмены слайдов
+  const stopAutoPlay = () => {
     clearInterval(interval);
   };
 
+  // Слушатель для управления по клику на контроллеры
   sliderContainer.addEventListener('click', event => {
     event.preventDefault();
     const target = event.target;
-    if (!target.matches('.portfolio-btn, .dot')) {
+
+    // Если клик не по контроллеру, ничего не происходит
+    if (!target.matches(controlsSelectors)) {
       return;
     }
-    prevSlide(slides, currentSlide, 'portfolio-item-active');
-    prevSlide(dots, currentSlide, 'dot-active');
-    if (target.matches('#arrow-right')) {
-      currentSlide++;
-    } else if (target.matches('#arrow-left')) {
+
+    disactivateSlide(currentSlide);
+
+    switch (true) {
+    case target.matches(prevButtonSelector): {
       currentSlide--;
-    } else if (target.matches('.dot')) {
-      currentSlide = [...dots].indexOf(target);
+      break;
     }
-    if (currentSlide >= slides.length) currentSlide = 0;
-    if (currentSlide < 0) currentSlide = slides.length - 1;
-    nextSlide(slides, currentSlide, 'portfolio-item-active');
-    nextSlide(dots, currentSlide, 'dot-active');
+    case target.matches(nextButtonSelector): {
+      currentSlide++;
+      break;
+    }
+    case target.matches(`.${dotClass}`): {
+      currentSlide = [...dots].indexOf(target);
+      break;
+    }
+    }
+
+    fixSliderOverflow();
+    activateSlide(currentSlide);
   });
 
+  // Слушатель останавливает автопроигрывание при наведении курсора на контроллеры
   sliderContainer.addEventListener('mouseover', event => {
-    if (event.target.matches('.portfolio-btn,.dot ')) {
-      stopSlider();
+    if (event.target.matches(controlsSelectors)) {
+      stopAutoPlay();
     }
   });
+
+  // Слушатель запускает автопроигрывание (если параметр autoPlay = true) при уходе курсора c контроллера
   sliderContainer.addEventListener('mouseout', event => {
-    if (event.target.matches('.portfolio-btn,.dot ')) {
-      startSlider();
+    if (event.target.matches(controlsSelectors)) {
+      startAutoPlay();
     }
   });
-  startSlider(1500);
+
+  // Запуск автопроигрывания (если параметр autoPlay = true)
+  startAutoPlay();
 };
-slider();
+
+slider('.portfolio-content', 'portfolio-item', '-active', 'dot', '#arrow-left', '#arrow-right', true, 5000);
