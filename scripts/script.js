@@ -182,45 +182,57 @@ const tabHeader = document.querySelector('.service-header'),
 controlTabs(tabHeader, '.service-header-tab', tabContents);
 
 // TODO[done] Реализовать слайдер на сайте по видеоуроку
-// TODO Удалить все элементы со страницы с классом dot (из верстки Index.html)
-// TODO Написать скрипт, который будет на страницу добавлять точки с классом dot равному количеству слайдов
+// TODO[done] Удалить все элементы со страницы с классом dot (из верстки Index.html)
+// TODO[done] Написать скрипт, который будет на страницу добавлять точки с классом dot равному количеству слайдов
 
 // Слайдер
 // Слайдер получает параметры: селектор контейнера, класс слайда, суффикс для классов активных слайда и точки,
 // селекторы кнопок назад и вперед, флаг автопроигрывания (по умолчанию включено), период смены слайда (по умолчанию 3 секунды)
-const slider = (sliderContainerSelector, slideClass, activeSuffix, dotClass, prevButtonSelector, nextButtonSelector, autoPlay = true, changeTime = 2000) => {
+const slider = (sliderContainerSelector, slideClass, activeSuffix, dotsContainerSelector, dotClass, prevButtonSelector, nextButtonSelector, autoPlay = true, changeTime = 2000) => {
   const sliderContainer = document.querySelector(sliderContainerSelector),
     slides = document.getElementsByClassName(slideClass),
-    dots = document.getElementsByClassName(dotClass),
+    dotsContainer =  document.querySelector(dotsContainerSelector),
+    dots = [],
     controlsSelectors = `${prevButtonSelector},${nextButtonSelector},.${dotClass}`;
 
-  let currentSlide = 0,
+  let currentIndex = 0,
     interval;
+
+  // Добавление точек пагинации
+  const  createPaginationDots = () => {
+    for (let  i = 0; i < slides.length; i++) {
+      const dot = document.createElement('li');
+      dot.className = dotClass;
+      dotsContainer.append(dot);
+      dots.push(dot);
+    }
+    dots[currentIndex].classList.add(`${dotClass}${activeSuffix}`);
+  };
 
   // Исправление выхода текущего индекса за пределы количества слайдов
   const fixSliderOverflow = () => {
-    if (currentSlide >= slides.length) currentSlide = 0;
-    if (currentSlide < 0) currentSlide = slides.length - 1;
+    if (currentIndex >= slides.length) currentIndex = 0;
+    if (currentIndex < 0) currentIndex = slides.length - 1;
   };
 
   // Дизактивация слайда ( и соответствующей точки)
-  const disactivateSlide = index => {
-    slides[index].classList.remove(`${slideClass}${activeSuffix}`);
-    dots[index].classList.remove(`${dotClass}${activeSuffix}`);
+  const disactivateSlide = () => {
+    slides[currentIndex].classList.remove(`${slideClass}${activeSuffix}`);
+    dots[currentIndex].classList.remove(`${dotClass}${activeSuffix}`);
   };
 
   // Активация слайда ( и соответствующей точки)
-  const activateSlide =  index  => {
-    slides[index].classList.add(`${slideClass}${activeSuffix}`);
-    dots[index].classList.add(`${dotClass}${activeSuffix}`);
+  const activateSlide =  ()  => {
+    slides[currentIndex].classList.add(`${slideClass}${activeSuffix}`);
+    dots[currentIndex].classList.add(`${dotClass}${activeSuffix}`);
   };
 
   // Смена слайда на следующий
   const changeSlideToNext = () => {
-    disactivateSlide(currentSlide);
-    currentSlide++;
+    disactivateSlide();
+    currentIndex++;
     fixSliderOverflow();
-    activateSlide(currentSlide);
+    activateSlide();
   };
 
   // Запуск авпосмены слайдов
@@ -243,25 +255,25 @@ const slider = (sliderContainerSelector, slideClass, activeSuffix, dotClass, pre
       return;
     }
 
-    disactivateSlide(currentSlide);
+    disactivateSlide();
 
     switch (true) {
     case target.matches(prevButtonSelector): {
-      currentSlide--;
+      currentIndex--;
       break;
     }
     case target.matches(nextButtonSelector): {
-      currentSlide++;
+      currentIndex++;
       break;
     }
     case target.matches(`.${dotClass}`): {
-      currentSlide = [...dots].indexOf(target);
+      currentIndex = dots.indexOf(target);
       break;
     }
     }
 
     fixSliderOverflow();
-    activateSlide(currentSlide);
+    activateSlide();
   });
 
   // Слушатель останавливает автопроигрывание при наведении курсора на контроллеры
@@ -278,8 +290,10 @@ const slider = (sliderContainerSelector, slideClass, activeSuffix, dotClass, pre
     }
   });
 
+  // Создаются точки пагинации
+  createPaginationDots();
   // Запуск автопроигрывания (если параметр autoPlay = true)
   startAutoPlay();
 };
 
-slider('.portfolio-content', 'portfolio-item', '-active', 'dot', '#arrow-left', '#arrow-right', true, 5000);
+slider('.portfolio-content', 'portfolio-item', '-active', '.portfolio-dots', 'dot', '#arrow-left', '#arrow-right', true, 5000);
