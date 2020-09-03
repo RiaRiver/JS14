@@ -2,7 +2,10 @@
 // window.addEventListener('DOMContentLoaded', function(){});
 
 // Timer
-function countTimer(deadline, { hours, minutes, seconds }) {
+function countTimer(deadline, hoursSelector, minutesSelector, secondsSelector) {
+  const hours = document.querySelector(hoursSelector),
+    minutes = document.querySelector(minutesSelector),
+    seconds = document.querySelector(secondsSelector);
   let timerInterval = null;
 
   // Получение оставшегося времени
@@ -36,15 +39,27 @@ function countTimer(deadline, { hours, minutes, seconds }) {
   timerInterval = setInterval(updateTimer, 1000);
 }
 
-// Получение элементов и запуск таймера
-const hours = document.querySelector('#timer-hours');
-const minutes = document.querySelector('#timer-minutes');
-const seconds = document.querySelector('#timer-seconds');
-countTimer('03 september 2020 08:15:30', { hours, minutes, seconds });
+// Запуск таймера
+countTimer('05 september 2020 08:15:30', '#timer-hours', '#timer-minutes', '#timer-seconds');
 
+// Плавная прокрутка к элементу
 const scrollToElem = elem => {
   elem.scrollIntoView({ behavior: 'smooth' });
 };
+
+// Кнопка "Вниз"
+const activateScrollDownButton = targetHash => {
+  const scrollDownButton = document.querySelector(`[href = "${targetHash}"]`),
+    scrollDownTarget = document.querySelector(targetHash);
+
+  scrollDownButton.addEventListener('click', event => {
+    event.preventDefault();
+    scrollToElem(scrollDownTarget);
+  });
+};
+
+// Настройка работы кнопки Вниз
+activateScrollDownButton('#service-block');
 
 // Меню
 const toggleMenu = (menuButtonSelector, menuSelector) => {
@@ -100,8 +115,10 @@ function animate({ timing, draw, duration }) {
 }
 
 // PopUp
-const togglePopUp = (popupButtons, popUp) => {
-  const closeButton = popUp.querySelector('.popup-close');
+const togglePopUp = (popupButtonsSelector, popUpSelector) => {
+  const popUp = document.querySelector(popUpSelector),
+    popupButtons = document.querySelectorAll(popupButtonsSelector),
+    closeButton = popUp.querySelector('.popup-close');
 
   // Открытие модального окна
   const openPopUp = () => {
@@ -140,22 +157,14 @@ const togglePopUp = (popupButtons, popUp) => {
   });
 };
 
-// Получение кнопок открытия модалок и элемента модального окна, вызов функции управления модальными окнами
-const popUp = document.querySelector('.popup'),
-  popupButtons = document.querySelectorAll('.popup-btn');
-togglePopUp(popupButtons, popUp);
-
-// Настройка кнопки "Вниз"
-const scrollDownButton = document.querySelector('[href = "#service-block"]'),
-  scrollDownTarget = document.querySelector('#service-block');
-scrollDownButton.addEventListener('click', event => {
-  event.preventDefault();
-  scrollToElem(scrollDownTarget);
-});
+// Вызов функции управления модальными окнами
+togglePopUp('.popup-btn', '.popup');
 
 // Табы
-const controlTabs = (tabHeader, tabSelector, tabContents) => {
-  const tabs = tabHeader.querySelectorAll(tabSelector);
+const controlTabs = (tabsContainerSelector, tabSelector, tabContentsSelector) => {
+  const tabsContainer = document.querySelector(tabsContainerSelector),
+    tabs = tabsContainer.querySelectorAll(tabSelector),
+    tabContents = document.querySelectorAll(tabContentsSelector);
   const changeTabContent = currentTab => {
     tabs.forEach((tab, i) => {
       if (tab === currentTab) {
@@ -168,7 +177,7 @@ const controlTabs = (tabHeader, tabSelector, tabContents) => {
     });
   };
 
-  tabHeader.addEventListener('click', event => {
+  tabsContainer.addEventListener('click', event => {
     const currentTab = event.target.closest(tabSelector);
     if (currentTab) {
       changeTabContent(currentTab);
@@ -176,10 +185,8 @@ const controlTabs = (tabHeader, tabSelector, tabContents) => {
   });
 };
 
-// Получение блока с табами и блоков с контентом, вызов функции управления переключения табов
-const tabHeader = document.querySelector('.service-header'),
-  tabContents = document.querySelectorAll('.service-tab');
-controlTabs(tabHeader, '.service-header-tab', tabContents);
+// Вызов функции управления переключения табов
+controlTabs('.service-header', '.service-header-tab', '.service-tab');
 
 // TODO[done] Реализовать слайдер на сайте по видеоуроку
 // TODO[done] Удалить все элементы со страницы с классом dot (из верстки Index.html)
