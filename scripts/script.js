@@ -13,12 +13,19 @@ class Todo {
     this.todo = document.querySelector(todoListClass);
     this.todoCompleted = document.querySelector(todoCompletedClass);
     this.todoData = new Map(JSON.parse(localStorage.getItem('todoData')));
+    this.popUpHandler = this.popUpHandler.bind(this);
   }
 
   init() {
     this.form.addEventListener('submit', this.addTodo.bind(this));
     this.render();
     this.handler();
+    this.createPopUp();
+
+    window.addEventListener('focus', () => {
+      this.todoData = new Map(JSON.parse(localStorage.getItem('todoData')));
+      this.render();
+    });
   }
 
   generateKey() {
@@ -27,6 +34,74 @@ class Todo {
 
   addToStorage() {
     localStorage.setItem('todoData', JSON.stringify([...this.todoData]));
+  }
+
+  // TODO[done] Сообщить пользователю (любым способом) что пустое дело добавить нельзя!
+
+  createPopUp() {
+    const style = document.createElement('style');
+    style.textContent = `
+      .popup {
+        visibility: hidden;
+        opacity: 0;
+        transition: 0.5s;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 99;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    
+      .popup-content{
+        position: relative;
+      }
+    
+      .popup-close{
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        cursor: pointer;
+      }
+    `;
+
+    this.popUp = document.createElement('div');
+    this.popUp.className  = 'popup';
+    this.popUp.innerHTML = `
+      <div class="popup-content">
+        <button class="popup-close"></button>
+        <h2>Пустое дело добавить нельзя!</h2></div>
+      </div>
+    `;
+    document.head.append(style);
+    document.body.append(this.popUp);
+  }
+
+  popUpHandler(e) {
+    e.preventDefault();
+    const target = e.target;
+    if (target.matches('.popup-close') || e.key === 'Escape' || e.key === 'Enter') {
+      this.togglePopUp();
+    }
+  }
+
+  togglePopUp() {
+    if (!this.popUp.style.visibility) {
+      this.popUp.style.visibility = 'visible';
+      this.popUp.style.opacity = '1';
+      document.addEventListener('click', this.popUpHandler);
+      document.addEventListener('keydown', this.popUpHandler);
+      document.activeElement.blur();
+    } else {
+      this.popUp.style.visibility = '';
+      this.popUp.style.opacity = '';
+      this.input.focus();
+      document.removeEventListener('click', this.popUpHandler);
+      document.removeEventListener('keydown', this.popUpHandler);
+    }
   }
 
   render() {
@@ -47,6 +122,8 @@ class Todo {
       };
       this.todoData.set(newTodo.key, newTodo);
       this.render();
+    } else {
+      this.togglePopUp();
     }
   }
 
@@ -69,11 +146,9 @@ class Todo {
     }
   }
 
-
   // TODO[done] Реализовать методы handler(), deleteItem(), completedItem()
 
   handler() {
-    // кнопки, делегирование
     this.todoContainer.addEventListener('click', event => {
       const target = event.target;
       const targetTodoItem = target.closest(`.${this.todoItemClass}`);
@@ -94,17 +169,15 @@ class Todo {
     const currentTodo = this.todoData.get(key);
     currentTodo.completed = !(currentTodo.completed);
     this.render();
-    console.log(this.todoData);
   }
 
   deleteTodo(key) {
     this.todoData.delete(key);
     this.render();
   }
-
-// TODO Сообщить пользователю (любым способом) что пустое дело добавить нельзя!
 }
 
 const todo = new Todo('.todo-control', '.header-input', '.todo-container', '.todo-list', '.todo-completed');
 
 todo.init();
+
