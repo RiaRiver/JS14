@@ -1,5 +1,23 @@
 'use strict';
-// TODO[done] Написать ToDo в виде класса
+// Паттерн анимации
+function animate({ timing = timeFraction => timeFraction, draw, duration = 500 }) {
+  const start = performance.now();
+
+  requestAnimationFrame(function animateStep(time) {
+    // timeFraction изменяется от 0 до 1
+    let timeFraction = (time - start) / duration;
+    if (timeFraction > 1) timeFraction = 1;
+
+    // вычисление текущего состояния анимации
+    const progress = timing(timeFraction);
+
+    draw(progress); // отрисовать её
+
+    if (timeFraction < 1) {
+      requestAnimationFrame(animateStep);
+    }
+  });
+}
 
 class Todo {
   constructor(formClass, inputClass, todoContainerClass, todoListClass, todoCompletedClass, todoItemClass = 'todo-item', editButtonClass = 'todo-edit', removeButtonClass = 'todo-remove', completeButtonClass = 'todo-complete') {
@@ -35,8 +53,6 @@ class Todo {
   addToStorage() {
     localStorage.setItem('todoData', JSON.stringify([...this.todoData]));
   }
-
-  // TODO[done] Сообщить пользователю (любым способом) что пустое дело добавить нельзя!
 
   createPopUp() {
     const style = document.createElement('style');
@@ -121,7 +137,8 @@ class Todo {
         key: this.generateKey(),
       };
       this.todoData.set(newTodo.key, newTodo);
-      this.render();
+      this.addToStorage();
+      this.createTodoItem(newTodo);
     } else {
       this.togglePopUp();
     }
@@ -144,9 +161,8 @@ class Todo {
     } else {
       this.todo.append(li);
     }
+    this.input.value = '';
   }
-
-  // TODO[done] Реализовать методы handler(), deleteItem(), completedItem()
 
   handler() {
     this.todoContainer.addEventListener('click', event => {
@@ -154,26 +170,94 @@ class Todo {
       const targetTodoItem = target.closest(`.${this.todoItemClass}`);
       switch (true) {
       case target.matches(`.${this.removeButtonClass}`): {
-        this.deleteTodo(targetTodoItem.key);
+        this.deleteTodo(targetTodoItem);
         break;
       }
       case target.matches(`.${this.completeButtonClass}`): {
-        this.completeTodo(targetTodoItem.key);
+        this.completeTodo(targetTodoItem);
+        break;
+      }
+      case target.matches(`.${this.editButtonClass}`): {
+        this.editTodo(targetTodoItem, target);
         break;
       }
       }
     });
   }
 
-  completeTodo(key) {
-    const currentTodo = this.todoData.get(key);
+  // TODO[done] Добавить анимацию удаления и перемещения дела между списками
+
+  completeTodo(targetTodoItem) {
+    const currentTodo = this.todoData.get(targetTodoItem.key);
+    const targetList = (currentTodo.completed) ? this.todo : this.todoCompleted;
     currentTodo.completed = !(currentTodo.completed);
-    this.render();
+    this.addToStorage();
+
+    animate({
+      draw(progress) {
+        if (progress < 1) {
+          targetTodoItem.style.opacity = 1 - progress;
+        } else {
+          targetList.append(targetTodoItem);
+          animate({
+            draw(progress) {
+              targetTodoItem.style.opacity = progress;
+            }
+          });
+        }
+      }
+    });
   }
 
-  deleteTodo(key) {
-    this.todoData.delete(key);
-    this.render();
+  deleteTodo(targetTodoItem) {
+    this.todoData.delete(targetTodoItem.key);
+    this.addToStorage();
+
+    animate({
+      draw(progress) {
+        if (progress !== 1) {
+          targetTodoItem.style.opacity = 1 - progress;
+        } else {
+          targetTodoItem.remove();
+        }
+      }
+    });
+  }
+
+  // TODO[done] Добавить возможность редактирования дела (+ 1 метод), добавить кнопку редактирования, класс для кнопки "todo-edit"
+
+  editTodo(targetTodoItem, editButton) {
+    const todoText = editButton.parentElement.previousElementSibling,
+      currentTodo = this.todoData.get(targetTodoItem.key);
+
+    const toggleEdit = saveTodoChanges => {
+      if (!todoText.isContentEditable) {
+        todoText.contentEditable = true;
+        todoText.focus();
+
+        todoText.addEventListener('keydown', saveTodoChanges);
+        todoText.addEventListener('blur', saveTodoChanges);
+      } else {
+        todoText.contentEditable = 'inherit';
+        todoText.removeEventListener('keydown', saveTodoChanges);
+        todoText.removeEventListener('blur', saveTodoChanges);
+      }
+    };
+
+    const saveTodoChanges = e => {
+      if (e.key === 'Enter' || e.type === 'blur') {
+        e.preventDefault();
+        currentTodo.value = todoText.textContent;
+        this.addToStorage();
+        toggleEdit(saveTodoChanges);
+      }
+      if (e.key === 'Escape') {
+        todoText.textContent = currentTodo.value;
+        toggleEdit(saveTodoChanges);
+      }
+    };
+
+    toggleEdit(saveTodoChanges);
   }
 }
 
