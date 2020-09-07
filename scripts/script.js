@@ -188,10 +188,6 @@ const controlTabs = (tabsContainerSelector, tabSelector, tabContentsSelector) =>
 // Вызов функции управления переключения табов
 controlTabs('.service-header', '.service-header-tab', '.service-tab');
 
-// TODO[done] Реализовать слайдер на сайте по видеоуроку
-// TODO[done] Удалить все элементы со страницы с классом dot (из верстки Index.html)
-// TODO[done] Написать скрипт, который будет на страницу добавлять точки с классом dot равному количеству слайдов
-
 // Слайдер
 // Слайдер получает параметры: селектор контейнера, класс слайда, суффикс для классов активных слайда и точки,
 // селекторы кнопок назад и вперед, флаг автопроигрывания (по умолчанию включено), период смены слайда (по умолчанию 3 секунды)
@@ -304,3 +300,41 @@ const slider = (sliderContainerSelector, slideClass, activeSuffix, dotsContainer
 };
 
 slider('.portfolio-content', 'portfolio-item', '-active', '.portfolio-dots', 'dot', '#arrow-left', '#arrow-right', true, 5000);
+
+// TODO[done] В нашем проекте есть Блок с картинками Наша Команда: У каждой фото есть data атрибут с другой картинкой data-image. Необходимо реализовать, чтобы по наведению мышкой менялись фотографии, а если увести мышку с элемента то возвращается прежняя фото.
+
+// Смена фотографий в блоке команда по наведению мыши
+const changeCommandPhotoByMouseEvent = commandImageSelector => {
+  const commandImages = document.querySelectorAll(commandImageSelector);
+
+  const changePhoto = event => {
+    const target = event.target;
+    const prevSrc = target.attributes.src.value;
+    target.src = target.dataset.img;
+    target.dataset.img = prevSrc;
+  };
+
+  commandImages.forEach(image => {
+    image.addEventListener('mouseenter', changePhoto);
+    image.addEventListener('mouseleave', changePhoto);
+  });
+};
+
+changeCommandPhotoByMouseEvent('.command__photo');
+
+// TODO[done] В калькуляторе разрешить ввод только цифр:
+
+// Функция валидации инпутов
+const validate = (inputsSelector, ruleFunction) => {
+  const inputs = document.querySelectorAll(inputsSelector);
+
+  const validateFunctions = {
+    validateDigits() {
+      this.value = this.value.replace(/\D/g, '');
+    }
+  };
+
+  inputs.forEach(input => input.addEventListener('input', validateFunctions[ruleFunction]));
+};
+
+validate('input.calc-item', 'validateDigits');
