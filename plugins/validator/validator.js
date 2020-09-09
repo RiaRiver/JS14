@@ -25,14 +25,15 @@ class Validator {
   }
 
   applyStyle() {
+    const docStyles = document.querySelectorAll('style');
     const style = document.createElement('style');
 
     style.textContent = `
       input.success {
-        border: 2px solid green;
+        border: 2px solid green !important;
       }
       input.error {
-        border: 2px solid red;
+        border: 2px solid red; !important;
       }
       .validator-error {
         font-size: 12px;
@@ -40,11 +41,14 @@ class Validator {
         color: red;
       }
 `;
-    document.head.append(style);
+
+    if ([...docStyles].every(docStyle => docStyle.textContent !== style.textContent)) {
+      document.head.append(style);
+    }
   }
 
   setPattern() {
-    this.pattern.phone = this.pattern.phone || /^\+?[78]([-()]*\d){10}$/;
+    this.pattern.phone = this.pattern.phone || /^\+?[78]([-()]?\d){10}$/;
     this.pattern.email = this.pattern.email || /^\w+@\w+\.\w{2,}$/;
   }
 
