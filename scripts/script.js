@@ -95,7 +95,7 @@ const toggleMenu = (menuButtonSelector, menuSelector) => {
 toggleMenu('.menu', 'menu');
 
 // Паттерн анимации
-const animate = ({ timing, draw, duration }) => {
+const animate = ({ timing = timeFraction => timeFraction, draw, duration = 500 }) => {
   const start = performance.now();
 
   requestAnimationFrame(function animateStep(time) {
@@ -127,10 +127,6 @@ const togglePopUp = (popupButtonsSelector, popUpSelector) => {
     // Анимация на экранах больше 768px шириной
     if (innerWidth > 768) {
       animate({
-        duration: 500,
-        timing(timeFraction) {
-          return timeFraction;
-        },
         draw(progress) {
           popUp.style.opacity = progress;
         }
@@ -335,7 +331,7 @@ const validate = (inputsSelector, ruleFunction) => {
 
 validate('input.calc-item', 'validateDigits');
 
-// TODO[done] Реализовать калькулятор на сайте по видео
+// TODO[done] Написать эффект изменения общей стоимости на чистом JS - перебор цифр
 
 // Калькулятор
 const calc = (price = 100) => {
@@ -365,12 +361,24 @@ const calc = (price = 100) => {
     if (typeValue && squareValue) {
       total = price * typeValue * squareValue * coef;
     }
-    totalOutput.textContent = total.toFixed(0);
+
+    if (total) {
+      let count = 0;
+      animate({
+        duration: 2000,
+        draw(progress) {
+          if (count === 7 || progress === 1) {
+            totalOutput.textContent = (progress * total).toFixed(0);
+            count = 0;
+          }
+          count++;
+        }
+      });
+    }
   };
 
-  calcBlock.addEventListener('change', () => {
-    calculate();
-  });
+  calcBlock.addEventListener('change', calculate);
 };
 
 calc(100);
+
