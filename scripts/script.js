@@ -2,14 +2,14 @@
 // window.addEventListener('DOMContentLoaded', function(){});
 
 // Timer
-function countTimer(deadline, hoursSelector, minutesSelector, secondsSelector) {
+const countTimer = (deadline, hoursSelector, minutesSelector, secondsSelector) => {
   const hours = document.querySelector(hoursSelector),
     minutes = document.querySelector(minutesSelector),
     seconds = document.querySelector(secondsSelector);
   let timerInterval = null;
 
   // Получение оставшегося времени
-  function getTimeRemaining() {
+  const getTimeRemaining = () => {
     const dateStop = new Date(deadline).getTime(),
       dateNow = new Date().getTime(),
       timeRemaining = (dateStop - dateNow) / 1000,
@@ -17,10 +17,10 @@ function countTimer(deadline, hoursSelector, minutesSelector, secondsSelector) {
       minutes = Math.floor((timeRemaining / 60) % 60),
       hours = Math.floor(timeRemaining / 60 / 60);
     return { timeRemaining, hours, minutes, seconds };
-  }
+  };
 
   // Обновление таймера
-  function updateTimer() {
+  const updateTimer = () => {
     const timer = getTimeRemaining();
 
     if (timer.timeRemaining < 1) {
@@ -33,14 +33,14 @@ function countTimer(deadline, hoursSelector, minutesSelector, secondsSelector) {
     hours.textContent = String(timer.hours).padStart(2, '0');
     minutes.textContent = String(timer.minutes).padStart(2, '0');
     seconds.textContent = String(timer.seconds).padStart(2, '0');
-  }
+  };
 
   updateTimer();
   timerInterval = setInterval(updateTimer, 1000);
-}
+};
 
 // Запуск таймера
-countTimer('05 september 2020 08:15:30', '#timer-hours', '#timer-minutes', '#timer-seconds');
+countTimer('11 september 2020 08:15:30', '#timer-hours', '#timer-minutes', '#timer-seconds');
 
 // Плавная прокрутка к элементу
 const scrollToElem = elem => {
@@ -95,7 +95,7 @@ const toggleMenu = (menuButtonSelector, menuSelector) => {
 toggleMenu('.menu', 'menu');
 
 // Паттерн анимации
-function animate({ timing, draw, duration }) {
+const animate = ({ timing, draw, duration }) => {
   const start = performance.now();
 
   requestAnimationFrame(function animateStep(time) {
@@ -112,7 +112,7 @@ function animate({ timing, draw, duration }) {
       requestAnimationFrame(animateStep);
     }
   });
-}
+};
 
 // PopUp
 const togglePopUp = (popupButtonsSelector, popUpSelector) => {
@@ -301,15 +301,13 @@ const slider = (sliderContainerSelector, slideClass, activeSuffix, dotsContainer
 
 slider('.portfolio-content', 'portfolio-item', '-active', '.portfolio-dots', 'dot', '#arrow-left', '#arrow-right', true, 5000);
 
-// TODO[done] В нашем проекте есть Блок с картинками Наша Команда: У каждой фото есть data атрибут с другой картинкой data-image. Необходимо реализовать, чтобы по наведению мышкой менялись фотографии, а если увести мышку с элемента то возвращается прежняя фото.
-
 // Смена фотографий в блоке команда по наведению мыши
 const changeCommandPhotoByMouseEvent = commandImageSelector => {
   const commandImages = document.querySelectorAll(commandImageSelector);
 
   const changePhoto = event => {
-    const target = event.target;
-    const prevSrc = target.attributes.src.value;
+    const target = event.target,
+      prevSrc = target.attributes.src.value;
     target.src = target.dataset.img;
     target.dataset.img = prevSrc;
   };
@@ -322,15 +320,13 @@ const changeCommandPhotoByMouseEvent = commandImageSelector => {
 
 changeCommandPhotoByMouseEvent('.command__photo');
 
-// TODO[done] В калькуляторе разрешить ввод только цифр:
-
 // Функция валидации инпутов
 const validate = (inputsSelector, ruleFunction) => {
   const inputs = document.querySelectorAll(inputsSelector);
 
   const validateFunctions = {
     validateDigits() {
-      this.value = this.value.replace(/\D/g, '');
+      this.value = this.value.replace(/\D|^0/g, '');
     }
   };
 
@@ -338,3 +334,41 @@ const validate = (inputsSelector, ruleFunction) => {
 };
 
 validate('input.calc-item', 'validateDigits');
+
+// TODO[done] Реализовать калькулятор на сайте по видео
+
+// Калькулятор
+const calc = (price = 100) => {
+  const calcBlock = document.querySelector('.calc-block'),
+    calcTypeSelect = document.querySelector('.calc-type'),
+    calcSquareInput = document.querySelector('.calc-square'),
+    calcCountInput = document.querySelector('.calc-count'),
+    calcDayInput = document.querySelector('.calc-day'),
+    totalOutput = document.getElementById('total');
+
+  const calculate = () => {
+    let total = 0,
+      coef = 1;
+    const typeValue = calcTypeSelect.value,
+      squareValue = calcSquareInput.value,
+      countValue = calcCountInput.value,
+      calcDayValue = calcDayInput.value;
+    if (countValue > 1) {
+      coef += (countValue - 1) / 10;
+    }
+    if (calcDayValue && calcDayValue < 5) {
+      coef *= 2;
+    } else if (calcDayValue && calcDayValue < 10) {
+      coef *= 1.5;
+    }
+
+    if (typeValue && squareValue) {
+      total = price * typeValue * squareValue * coef;
+    }
+    totalOutput.textContent = total.toFixed(0);
+  };
+
+  calcBlock.addEventListener('change', calculate);
+};
+
+calc(100);
