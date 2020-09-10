@@ -382,3 +382,61 @@ const calc = (price = 100) => {
 
 calc(100);
 
+// TODO[done] Написать скрипт по отправки данных по видео
+// TODO Подключить скрипт отправки данных к: Модальному окну, Контактной форме в самом низу страницы
+// TODO После отправки инпуты должны очищаться
+// TODO Сделать валидацию данных: в поля с номером телефона можно ввести только цифры и знак “+”
+// TODO Запретить ввод любых символов в поле "Ваше имя" и "Ваше сообщение", кроме Кириллицы и пробелов!
+
+// Отправка формы AJAX
+const sendForm = () => {
+  const errorMessage = 'Что-то пошло не так ...',
+    loadMessage = 'Загрузка ...',
+    successMessage = 'Спасибо! Мы скоро с вами свяжемся!';
+
+  const form = document.getElementById('form1');
+
+  const statusMessage = document.createElement('div');
+  statusMessage.style.cssText = 'font-size: 2rem;';
+
+  const getFormData = form => {
+    const formData = new FormData(form);
+    const body = {};
+    formData.forEach((value, key) => body[key] = value);
+    return body;
+  };
+
+  const outputMessage = () => {
+    statusMessage.textContent = successMessage;
+  };
+  const outputError = error => {
+    statusMessage.textContent = errorMessage;
+    console.error(error);
+  };
+
+  const sendData = (body, outputMessage, outputError) => {
+    const request = new XMLHttpRequest();
+    request.addEventListener('readystatechange', () => {
+      if (request.readyState !== 4) { return; }
+
+      if (request.status === 200) {
+        outputMessage();
+      } else {
+        outputError(request.status);
+      }
+    });
+
+    request.open('POST', './server.php');
+    request.setRequestHeader('Content-Type', 'application/json');
+    request.send(JSON.stringify(body));
+  };
+
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    form.append(statusMessage);
+    statusMessage.textContent = loadMessage;
+    sendData(getFormData(event.target), outputMessage, outputError);
+  });
+};
+
+sendForm();
