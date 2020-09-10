@@ -317,21 +317,23 @@ const changeCommandPhotoByMouseEvent = commandImageSelector => {
 changeCommandPhotoByMouseEvent('.command__photo');
 
 // Функция валидации инпутов
-const validate = (inputsSelector, ruleFunction) => {
+const validate = (inputsSelector, deniedPattern) => {
   const inputs = document.querySelectorAll(inputsSelector);
 
-  const validateFunctions = {
-    validateDigits() {
-      this.value = this.value.replace(/\D|^0/g, '');
-    }
+  const replaceDenied = event => {
+    event.target.value = event.target.value.replace(deniedPattern, '');
   };
 
-  inputs.forEach(input => input.addEventListener('input', validateFunctions[ruleFunction]));
+  inputs.forEach(input => {
+    input.addEventListener('input', replaceDenied);
+    input.addEventListener('paste', replaceDenied);
+  });
 };
 
-validate('input.calc-item', 'validateDigits');
-
-// TODO[done] Написать эффект изменения общей стоимости на чистом JS - перебор цифр
+validate('input.calc-item', /\D|^0+/g);
+validate('input.form-phone', /[^+\d]|((?<=.)\+)/g);
+validate('input.form-name, #form2-name', /[^\p{Script=Cyrillic}\s]/gu);
+validate('input.mess', /[^\p{Script=Cyrillic}\p{P}\s]/gu);
 
 // Калькулятор
 const calc = (price = 100) => {
@@ -382,22 +384,23 @@ const calc = (price = 100) => {
 
 calc(100);
 
-// TODO[done] Написать скрипт по отправки данных по видео
-// TODO Подключить скрипт отправки данных к: Модальному окну, Контактной форме в самом низу страницы
-// TODO После отправки инпуты должны очищаться
-// TODO Сделать валидацию данных: в поля с номером телефона можно ввести только цифры и знак “+”
-// TODO Запретить ввод любых символов в поле "Ваше имя" и "Ваше сообщение", кроме Кириллицы и пробелов!
+// TODO[done] Написать скрипт для отправки данных по видео
+// TODO[done] Подключить скрипт отправки данных к: Модальному окну, Контактной форме в самом низу страницы
+// TODO[done] После отправки инпуты должны очищаться
+// TODO[done] Сделать валидацию данных: в поля с номером телефона можно ввести только цифры и знак “+”
+// TODO[done] Запретить ввод любых символов в поле "Ваше имя" и "Ваше сообщение", кроме Кириллицы и пробелов!
 
 // Отправка формы AJAX
-const sendForm = () => {
-  const errorMessage = 'Что-то пошло не так ...',
-    loadMessage = 'Загрузка ...',
-    successMessage = 'Спасибо! Мы скоро с вами свяжемся!';
+const sendForm = (formSelector,
+  messageStyles = 'font-size: 2rem;',
+  successMessage = 'Спасибо! Мы скоро с вами свяжемся!',
+  loadMessage = 'Загрузка ...',
+  errorMessage = 'Что-то пошло не так ...') => {
 
-  const form = document.getElementById('form1');
+  const form = document.querySelector(formSelector);
 
   const statusMessage = document.createElement('div');
-  statusMessage.style.cssText = 'font-size: 2rem;';
+  statusMessage.style.cssText = messageStyles;
 
   const getFormData = form => {
     const formData = new FormData(form);
@@ -436,7 +439,10 @@ const sendForm = () => {
     form.append(statusMessage);
     statusMessage.textContent = loadMessage;
     sendData(getFormData(event.target), outputMessage, outputError);
+    form.reset();
   });
 };
 
-sendForm();
+sendForm('#form1');
+sendForm('#form2');
+sendForm('#form3', 'font-size: 2rem; color: white;');
