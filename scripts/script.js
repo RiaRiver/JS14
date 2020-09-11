@@ -384,23 +384,28 @@ const calc = (price = 100) => {
 
 calc(100);
 
-// TODO[done] Написать скрипт для отправки данных по видео
-// TODO[done] Подключить скрипт отправки данных к: Модальному окну, Контактной форме в самом низу страницы
-// TODO[done] После отправки инпуты должны очищаться
-// TODO[done] Сделать валидацию данных: в поля с номером телефона можно ввести только цифры и знак “+”
-// TODO[done] Запретить ввод любых символов в поле "Ваше имя" и "Ваше сообщение", кроме Кириллицы и пробелов!
+// TODO[done] Вместо текстового оповещения пользователя (объект message) при отправке использовать прелоадер картинку или анимацию
 
 // Отправка формы AJAX
-const sendForm = (formSelector,
+// Важно: в loadMessageOrInnerHTML можно передать текст или html прелоадера
+// в loadMessageStyleCSS передаются CSS стили для прелоадера (если во всех формах один и тот же прелоадер с одинаковыми классами, стили достаточно передать только для первого вызова)
+const sendForm = (formSelector, {
   messageStyles = 'font-size: 2rem;',
   successMessage = 'Спасибо! Мы скоро с вами свяжемся!',
-  loadMessage = 'Загрузка ...',
-  errorMessage = 'Что-то пошло не так ...') => {
+  loadMessageOrInnerHTML = 'Загрузка ...',
+  loadMessageStyleCSS = '',
+  errorMessage = 'Что-то пошло не так ...' } = {}) => {
 
   const form = document.querySelector(formSelector);
 
   const statusMessage = document.createElement('div');
   statusMessage.style.cssText = messageStyles;
+
+  if (loadMessageStyleCSS) {
+    const loadMessageStyles = document.createElement('style');
+    loadMessageStyles.textContent = loadMessageStyleCSS;
+    document.head.append(loadMessageStyles);
+  }
 
   const getFormData = form => {
     const formData = new FormData(form);
@@ -437,12 +442,73 @@ const sendForm = (formSelector,
   form.addEventListener('submit', event => {
     event.preventDefault();
     form.append(statusMessage);
-    statusMessage.textContent = loadMessage;
+    statusMessage.innerHTML = loadMessageOrInnerHTML;
     sendData(getFormData(event.target), outputMessage, outputError);
     form.reset();
   });
 };
 
-sendForm('#form1');
-sendForm('#form2');
-sendForm('#form3', 'font-size: 2rem; color: white;');
+sendForm('#form1',
+  { loadMessageOrInnerHTML: `
+      <div class="preloader">
+        <div class="pl-child-1 pl-child"></div>
+        <div class="pl-child-2 pl-child"></div>
+        <div class="pl-child-3 pl-child"></div>
+      </div>
+    `,
+  loadMessageStyleCSS: `
+    .preloader {
+      width: 6em;
+      margin: auto;
+      padding: 5px;
+      text-align: center;
+      }
+      
+    .pl-child {
+      width: 1em;
+      height: 1em;
+      background-color: #19b5fe ;
+      border-radius: 100%;
+      display: inline-block;
+      animation: preloader 1.4s ease-in-out 0s infinite both;
+    }
+
+    .pl-child-1 {
+      animation-delay: -0.32s;
+    }
+    
+    .pl-child-2 {
+      animation-delay: -0.16s;
+    }
+
+    @keyframes preloader {
+      0%, 80%, 100% {
+        transform: scale(0);
+      }
+      40% {
+        transform: scale(1.0);
+      }
+  `
+  });
+
+sendForm('#form2',
+  { loadMessageOrInnerHTML: `
+      <div class="preloader">
+        <div class="pl-child-1 pl-child"></div>
+        <div class="pl-child-2 pl-child"></div>
+        <div class="pl-child-3 pl-child"></div>
+      </div>
+    `
+  });
+
+sendForm('#form3',
+  { messageStyles: 'font-size: 2rem; color: white;',
+    loadMessageOrInnerHTML: `
+      <div class="preloader">
+        <div class="pl-child-1 pl-child"></div>
+        <div class="pl-child-2 pl-child"></div>
+        <div class="pl-child-3 pl-child"></div>
+      </div>
+    `
+  });
+
