@@ -1,7 +1,7 @@
 'use strict';
 const output = document.getElementById('output');
 
-const getData = (url, outputData) => {
+const getData = url => new Promise((resolve, reject) => {
   const request = new XMLHttpRequest();
   request.open('GET', url);
   request.addEventListener('readystatechange', () => {
@@ -10,13 +10,13 @@ const getData = (url, outputData) => {
     }
     if (request.status === 200) {
       const response = JSON.parse(request.responseText);
-      outputData(response);
+      resolve(response);
     } else {
-      console.error(request.statusText);
+      reject(request.statusText);
     }
   });
   request.send();
-};
+});
 
 const outputPhotos = data => {
   const random = Math.floor(Math.random() * data.length);
@@ -29,5 +29,7 @@ const outputPhotos = data => {
 };
 
 const urlPhotos = 'https://jsonplaceholder.typicode.com/photos';
-getData(urlPhotos, outputPhotos);
+getData(urlPhotos)
+  .then(outputPhotos)
+  .catch(error => console.error(error));
 
