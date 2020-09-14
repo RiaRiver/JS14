@@ -18,18 +18,36 @@ const getData = url => new Promise((resolve, reject) => {
   request.send();
 });
 
-const outputPhotos = data => {
+пше const outputPhoto = data => {
   const random = Math.floor(Math.random() * data.length);
   const obj = data[random];
   output.innerHTML = `
-  <h2>${obj.title}</h2>  
-  <img src="${obj.url}" alt="${obj.title}">   
+  <h4>${obj.title}</h4>  
+  <img src="${obj.thumbnailUrl}" alt="${obj.title}">   
   `;
+};
 
+const outputPhotos = data => {
+  data.forEach(obj => {
+    output.insertAdjacentHTML('beforeend', `
+  <h4>${obj.title}</h4>  
+  <img src="${obj.thumbnailUrl}" alt="${obj.title}">   
+  `
+    );
+  });
 };
 
 const urlPhotos = 'https://jsonplaceholder.typicode.com/photos';
-getData(urlPhotos)
+
+const firstImg = getData('https://jsonplaceholder.typicode.com/photos/1'),
+  secondImg = getData('https://jsonplaceholder.typicode.com/photos/2');
+
+// Promise.race([firstImg, secondImg])
+//   .then(outputPhotos)
+//   .catch(error => console.error(error));
+
+Promise.all([firstImg, secondImg])
   .then(outputPhotos)
   .catch(error => console.error(error));
+
 
