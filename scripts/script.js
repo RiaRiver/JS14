@@ -330,8 +330,10 @@ const validate = (inputsSelector, deniedPattern) => {
   });
 };
 
+// TODO[done] Ограничить телефон 12 цифрами
+
 validate('input.calc-item', /\D|^0+/g);
-validate('input.form-phone', /[^+\d]|((?<=.)\+)/g);
+validate('input.form-phone', /[^+\d]|((?<=.)\+)|((?<=\d{12}).)/g);
 validate('input.form-name, #form2-name', /[^\p{Script=Cyrillic}\s]/gu);
 validate('input.mess', /[^\p{Script=Cyrillic}\p{P}\s]/gu);
 
@@ -384,7 +386,8 @@ const calc = (price = 100) => {
 
 calc(100);
 
-// TODO[done] Вместо текстового оповещения пользователя (объект message) при отправке использовать прелоадер картинку или анимацию
+// TODO[done] Переписать скрипт для отправки данных с формы, используя промисы
+// TODO[done] Убирать сообщение об успешной отправке через 5 секунд
 
 // Отправка формы AJAX
 // Важно: в loadMessageOrInnerHTML можно передать текст или html прелоадера
@@ -416,34 +419,40 @@ const sendForm = (formSelector, {
 
   const outputMessage = () => {
     statusMessage.textContent = successMessage;
+    setTimeout(() => {
+      statusMessage.textContent = '';
+    }, 5000);
   };
   const outputError = error => {
     statusMessage.textContent = errorMessage;
     console.error(error);
   };
 
-  const sendData = (body, outputMessage, outputError) => {
+  const sendData = body => new Promise((resolve, reject) => {
     const request = new XMLHttpRequest();
     request.addEventListener('readystatechange', () => {
       if (request.readyState !== 4) { return; }
 
       if (request.status === 200) {
-        outputMessage();
+        resolve();
       } else {
-        outputError(request.status);
+        reject(request.status);
       }
     });
 
     request.open('POST', './server.php');
     request.setRequestHeader('Content-Type', 'application/json');
     request.send(JSON.stringify(body));
-  };
+  }
+  );
 
   form.addEventListener('submit', event => {
     event.preventDefault();
     form.append(statusMessage);
     statusMessage.innerHTML = loadMessageOrInnerHTML;
-    sendData(getFormData(event.target), outputMessage, outputError);
+    sendData(getFormData(event.target))
+      .then(outputMessage)
+      .catch(outputError);
     form.reset();
   });
 };
