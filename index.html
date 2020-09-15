@@ -5,62 +5,39 @@
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Heroes</title>
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/style.css">
+
   <script defer src="scripts/script.js"></script>
-  <style>
-      * {
-          box-sizing: border-box;
-      }
-
-      .cards {
-          display: flex;
-          justify-content: space-between;
-          flex-wrap: wrap;
-      }
-
-      .card {
-          flex-basis: 24%;
-          /*height: 500px;*/
-          border: 1px solid green;
-          list-style: none;
-          margin-bottom: 20px;
-          padding: 20px;
-      }
-
-      .card-text {
-          display: block;
-      }
-
-      img {
-          max-width: 100%;
-          /*object-fit: cover;*/
-      }
-  </style>
 </head>
 
 <body>
   <header>
-    <form action="" class="form" id="filters" name="filters">
-      <label for="hero-name">Name:</label>
-      <input id="hero-name" name="name" type="text">
-      <label for="hero-actors">Actor name:</label>
-      <input id="hero-actors" name="actors" type="text">
-      <label for="hero-gender">Gender:</label>
-      <select id="hero-gender" name="gender"></select>
-      <label for="hero-species">Species:</label>
-      <select id="hero-species" name="species"></select>
-      <label for="hero-citizenship">Citizenship:</label>
-      <select id="hero-citizenship" name="citizenship"></select>
-      <label for="hero-status">Status:</label>
-      <select id="hero-status" name="status"></select>
-      <label for="hero-movies">Movie:</label>
-      <input id="hero-movies" name="movies" type="text">
-    </form>
+    <div class="container">
+      <form action="" class="form" id="filters" name="filters">
+        <label for="hero-gender">Gender:</label>
+        <select id="hero-gender" name="gender"></select>
+        <label for="hero-species">Species:</label>
+        <select id="hero-species" name="species"></select>
+        <label for="hero-citizenship">Citizenship:</label>
+        <select id="hero-citizenship" name="citizenship"></select>
+        <label for="hero-status">Status:</label>
+        <select id="hero-status" name="status"></select>
+        <label for="hero-name">Name:</label>
+        <input id="hero-name" name="name" type="text">
+        <label for="hero-actors">Actor name:</label>
+        <input id="hero-actors" name="actors" type="text">
+        <label for="hero-movies">Movie:</label>
+        <input id="hero-movies" name="movies" type="text">
+      </form>
+    </div>
   </header>
   <main>
-    <h1></h1>
-    <ul class="cards" id="cards">
-
-    </ul>
+    <div class="container">
+      <h1>Marvel Heroes</h1>
+      <ul class="cards" id="cards">
+      </ul>
+    </div>
   </main>
 </body>
 
