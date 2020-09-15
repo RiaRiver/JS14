@@ -190,7 +190,7 @@ controlTabs('.service-header', '.service-header-tab', '.service-tab');
 const slider = (sliderContainerSelector, slideClass, activeSuffix, dotsContainerSelector, dotClass, prevButtonSelector, nextButtonSelector, autoPlay = true, changeTime = 2000) => {
   const sliderContainer = document.querySelector(sliderContainerSelector),
     slides = document.getElementsByClassName(slideClass),
-    dotsContainer =  document.querySelector(dotsContainerSelector),
+    dotsContainer = document.querySelector(dotsContainerSelector),
     dots = [],
     controlsSelectors = `${prevButtonSelector},${nextButtonSelector},.${dotClass}`;
 
@@ -198,8 +198,8 @@ const slider = (sliderContainerSelector, slideClass, activeSuffix, dotsContainer
     interval;
 
   // Добавление точек пагинации
-  const  createPaginationDots = () => {
-    for (let  i = 0; i < slides.length; i++) {
+  const createPaginationDots = () => {
+    for (let i = 0; i < slides.length; i++) {
       const dot = document.createElement('li');
       dot.className = dotClass;
       dotsContainer.append(dot);
@@ -221,7 +221,7 @@ const slider = (sliderContainerSelector, slideClass, activeSuffix, dotsContainer
   };
 
   // Активация слайда ( и соответствующей точки)
-  const activateSlide =  ()  => {
+  const activateSlide = () => {
     slides[currentIndex].classList.add(`${slideClass}${activeSuffix}`);
     dots[currentIndex].classList.add(`${dotClass}${activeSuffix}`);
   };
@@ -330,8 +330,6 @@ const validate = (inputsSelector, deniedPattern) => {
   });
 };
 
-// TODO[done] Ограничить телефон 12 цифрами
-
 validate('input.calc-item', /\D|^0+/g);
 validate('input.form-phone', /[^+\d]|((?<=.)\+)|((?<=\d{12}).)/g);
 validate('input.form-name, #form2-name', /[^\p{Script=Cyrillic}\s]/gu);
@@ -386,18 +384,19 @@ const calc = (price = 100) => {
 
 calc(100);
 
-// TODO[done] Переписать скрипт для отправки данных с формы, используя промисы
-// TODO[done] Убирать сообщение об успешной отправке через 5 секунд
+// TODO[done] Переписать скрипт для отправки данных с формы, используя Fetch
 
 // Отправка формы AJAX
 // Важно: в loadMessageOrInnerHTML можно передать текст или html прелоадера
-// в loadMessageStyleCSS передаются CSS стили для прелоадера (если во всех формах один и тот же прелоадер с одинаковыми классами, стили достаточно передать только для первого вызова)
+// в loadMessageStyleCSS передаются CSS стили для прелоадера (если во всех формах один и тот же прелоадер
+// с одинаковыми классами, стили достаточно передать только для первого вызова)
 const sendForm = (formSelector, {
   messageStyles = 'font-size: 2rem;',
   successMessage = 'Спасибо! Мы скоро с вами свяжемся!',
   loadMessageOrInnerHTML = 'Загрузка ...',
   loadMessageStyleCSS = '',
-  errorMessage = 'Что-то пошло не так ...' } = {}) => {
+  errorMessage = 'Что-то пошло не так ...'
+} = {}) => {
 
   const form = document.querySelector(formSelector);
 
@@ -419,89 +418,86 @@ const sendForm = (formSelector, {
 
   const outputMessage = () => {
     statusMessage.textContent = successMessage;
-    setTimeout(() => {
-      statusMessage.textContent = '';
-    }, 5000);
   };
   const outputError = error => {
     statusMessage.textContent = errorMessage;
     console.error(error);
   };
 
-  const sendData = body => new Promise((resolve, reject) => {
-    const request = new XMLHttpRequest();
-    request.addEventListener('readystatechange', () => {
-      if (request.readyState !== 4) { return; }
-
-      if (request.status === 200) {
-        resolve();
-      } else {
-        reject(request.status);
-      }
-    });
-
-    request.open('POST', './server.php');
-    request.setRequestHeader('Content-Type', 'application/json');
-    request.send(JSON.stringify(body));
-  }
-  );
+  const sendData = body => fetch('./server.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
 
   form.addEventListener('submit', event => {
     event.preventDefault();
     form.append(statusMessage);
     statusMessage.innerHTML = loadMessageOrInnerHTML;
     sendData(getFormData(event.target))
-      .then(outputMessage)
+      .then(response => {
+        setTimeout(() => {
+          statusMessage.textContent = '';
+        }, 5000);
+        if (response.status !== 200) {
+          throw new Error('Network status not 200.');
+        }
+        outputMessage();
+      })
       .catch(outputError);
     form.reset();
   });
 };
 
 sendForm('#form1',
-  { loadMessageOrInnerHTML: `
+  {
+    loadMessageOrInnerHTML: `
       <div class="preloader">
         <div class="pl-child-1 pl-child"></div>
         <div class="pl-child-2 pl-child"></div>
         <div class="pl-child-3 pl-child"></div>
       </div>
     `,
-  loadMessageStyleCSS: `
-    .preloader {
-      width: 6em;
-      margin: auto;
-      padding: 5px;
-      text-align: center;
+    loadMessageStyleCSS: `
+      .preloader {
+        width: 6em;
+        margin: auto;
+        padding: 5px;
+        text-align: center;
+        }
+        
+      .pl-child {
+        width: 1em;
+        height: 1em;
+        background-color: #19b5fe ;
+        border-radius: 100%;
+        display: inline-block;
+        animation: preloader 1.4s ease-in-out 0s infinite both;
+      }
+  
+      .pl-child-1 {
+        animation-delay: -0.32s;
       }
       
-    .pl-child {
-      width: 1em;
-      height: 1em;
-      background-color: #19b5fe ;
-      border-radius: 100%;
-      display: inline-block;
-      animation: preloader 1.4s ease-in-out 0s infinite both;
-    }
-
-    .pl-child-1 {
-      animation-delay: -0.32s;
-    }
-    
-    .pl-child-2 {
-      animation-delay: -0.16s;
-    }
-
-    @keyframes preloader {
-      0%, 80%, 100% {
-        transform: scale(0);
+      .pl-child-2 {
+        animation-delay: -0.16s;
       }
-      40% {
-        transform: scale(1.0);
-      }
+  
+      @keyframes preloader {
+        0%, 80%, 100% {
+          transform: scale(0);
+        }
+        40% {
+          transform: scale(1.0);
+        }
   `
   });
 
 sendForm('#form2',
-  { loadMessageOrInnerHTML: `
+  {
+    loadMessageOrInnerHTML: `
       <div class="preloader">
         <div class="pl-child-1 pl-child"></div>
         <div class="pl-child-2 pl-child"></div>
@@ -511,7 +507,8 @@ sendForm('#form2',
   });
 
 sendForm('#form3',
-  { messageStyles: 'font-size: 2rem; color: white;',
+  {
+    messageStyles: 'font-size: 2rem; color: white;',
     loadMessageOrInnerHTML: `
       <div class="preloader">
         <div class="pl-child-1 pl-child"></div>
