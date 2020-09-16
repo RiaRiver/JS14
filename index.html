@@ -3,13 +3,31 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>JavaScript 14</title>
-  <script src="scripts/script.js" defer></script>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="scripts/script.js"></script>
 </head>
 
 <body>
-
+  <main>
+    <div class="container">
+      <h1>Конвертер валют</h1>
+      <form class="form" name="converter">
+        <div class="group">
+          <label for="left-input">Доллар США (USD)</label>
+          <input id="left-input" name="usd" type="text">
+        </div>
+        <button class="reverse" id="reverse" type="button"></button>
+        <div class="group">
+          <label for="right-input">Российский рубль (RUB)</label>
+          <input disabled id="right-input" name="rub" type="text">
+        </div>
+        <span class="rate" id="rate"></span>
+        <button class="submit" type="submit">Конвертировать</button>
+      </form>
+    </div>
+  </main>
 </body>
 
 </html>
