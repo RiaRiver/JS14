@@ -1,5 +1,7 @@
 'use strict';
 
+import "./modules/polyfills";
+
 import {countTimer} from "./modules/countTimer";
 import {activateScrollDownButton} from "./modules/activateScrollDownButton";
 import {toggleMenu} from "./modules/toggleMenu";
