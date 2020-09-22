@@ -136,8 +136,6 @@ main{
 }
 
 .reset, .question {
-
-
     margin: auto;
     cursor: pointer;
 }
@@ -192,6 +190,7 @@ main{
 
 .card-back {
     position: relative;
+    z-index: 2;
     transform: rotateY(-180deg);
     background: #DCB8B2;
 }
@@ -201,10 +200,12 @@ main{
     width:  50%;
 }
 
-.card-back .card-photo{
+.card-back .card-photo, .card:nth-child(2n+1) .card-photo{
     order: 1;
 }
-
+.card:nth-child(2n+1) .card-back .card-photo {
+    order: 0;
+}
 .card-block{
     width:  50%;
     background: #3737E6 url("/media/back.png");
@@ -232,21 +233,18 @@ main{
             2px 2px 3px #000000
 }
 
-.click-icon {
+.click-icon, .card:nth-child(2n+1) .card-back .click-icon {
     position: absolute;
     top: 8px;
     left: 8px;
     width: 31px;
     z-index: 3;
+    transform: rotateY(0deg);
 }
 
-.card-back .click-icon {
-    position: absolute;
-    top: 8px;
+.card-back .click-icon, .card:nth-child(2n+1) .click-icon {
     right: 8px;
     left: auto;
-    width: 31px;
-    z-index: 3;
     transform: rotateY(180deg);
 }
 .card-content {
@@ -256,7 +254,7 @@ main{
 .card-hero{
     display: grid;
     grid-template-columns: 1fr 1fr;
-
+column-gap: 3px;
 
 }
 
@@ -285,8 +283,16 @@ main{
     font-weight: bold;
     font-size: 20px;
 }
+.card-movie {
+    display: flex;
+    flex-direction: column;
+}
 .card-movie *{
     margin-bottom: 10px;
+}
+.card-movie ul {
+    margin-bottom: 0;
+    overflow-y: auto;
 }
 .card-movie li {
     margin-bottom: 5px;
@@ -391,9 +397,16 @@ select option { font-weight:normal; }
 .dropdown-item{
     cursor: pointer;
     user-select: none;
-    height: 20px;
+    min-height: 20px;
     background-color: #60cbff;
     padding-left: 5px;
+
+}
+.dropdown-item:hover{
+
+    background-color: #0078d7;
+    color: white;
+
 
 }
 .dropdown-block{
@@ -425,13 +438,41 @@ select option { font-weight:normal; }
 .clear-line:last-child{
     transform: rotate(-45deg);
 }
-/*@media screen and (max-width: 992px) {*/
-/*    .card {*/
-/*        flex-basis: 33%;*/
-/*    }*/
-/*}*/
 
+@media screen and (max-width: 576px) , screen and (max-height: 420px){
+    .card-flipper{
+        width: 250px;
+        height: 190px;
+    }
+    .card-block{
+        padding: 10px;
+    }
+.card-name{
+    font-size: 14px;
+}
+.card-prop, .card-value{
+    font-size: 12px;
+    font-weight: bold;
+}
+    .card-movie * {
+        margin-bottom: 4px;}
+    .card-movie li {
+        margin-bottom: 4px}
+    .card:nth-child(1n) .card-back .click-icon, .card .click-icon{
+    width: 16px;
+}
+    .reset, .question{
+        height: 16px;
+    }
+    label, select, input {
+        font-size: 12px;
+    }
+    form{
+        grid-gap: 2px;
+        padding: 4px 0;
+    }
+    main{
+        padding-top: 125px;
+    }
+}
 
-/*    .card {*/
-/*        flex-basis: 300px;*/
-/*    }*/
