@@ -5,36 +5,71 @@
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Heroes</title>
-  <link rel="stylesheet" href="css/normalize.css">
-  <link rel="stylesheet" href="css/style.css">
+  <link href="css/fonts.css" rel="stylesheet">
+  <link href="css/normalize.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
 
   <script defer src="scripts/script.js"></script>
 </head>
 
 <body>
+  <div class="popup">
+    <div class="popup-block">
+      <video class="video" muted="" poster="media/preload.png" preload>
+        <source src="media/marv.mp4" type="video/mp4"/>
+        <source src="media/marv.ogv" type="video/ogv"/>
+        <source src="media/marv.webm" type="video/webm"/>
+      </video>
+      <img alt="" class="preload" src="media/preload.png">
+      <div class="info">
+        <span class="skip">Skip</span>
+        <div class="preloader">
+          <div class="pl-child-1 pl-child"></div>
+          <div class="pl-child-2 pl-child"></div>
+          <div class="pl-child-3 pl-child"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
   <header>
     <div class="container">
-      <form action="" class="form" id="filters" name="filters">
-        <label for="hero-gender">Gender:</label>
-        <select id="hero-gender" name="gender"></select>
-        <label for="hero-species">Species:</label>
-        <select id="hero-species" name="species"></select>
-        <label for="hero-citizenship">Citizenship:</label>
-        <select id="hero-citizenship" name="citizenship"></select>
-        <label for="hero-status">Status:</label>
-        <select id="hero-status" name="status"></select>
-        <label for="hero-name">Name:</label>
-        <input id="hero-name" name="name" type="text">
-        <label for="hero-actors">Actor name:</label>
-        <input id="hero-actors" name="actors" type="text">
-        <label for="hero-movies">Movie:</label>
-        <input id="hero-movies" name="movies" type="text">
+      <form action="" class="form" id="filters" name="filters" autocomplete="off">
+        <img alt="Marvel Heroes Logo" class="logo" src="media/Logo.png">
+        <div class="group group--first"><label for="hero-gender">Gender:</label>
+          <select id="hero-gender" name="gender"></select></div>
+        <div class="group"><label for="hero-species">Species:</label>
+          <select id="hero-species" name="species"></select></div>
+        <div class="group"><label for="hero-citizenship">Citizenship:</label>
+          <select id="hero-citizenship" name="citizenship"></select></div>
+        <div class="group"><label for="hero-status">Status:</label>
+          <select id="hero-status" name="status"></select></div>
+        <div class="group dropdown-block">
+          <div class="clear">
+            <div class="clear-line"></div>
+            <div class="clear-line"></div>
+          </div>
+          <label for="hero-name">Name:</label>
+            <input id="hero-name" name="name" type="text" >
+            <ul class="dropdown"></ul>
+        </div>
+        <img alt="question" class="question" src="media/question.svg">
+        <img alt="reset" class="reset" src="media/reset.svg">
+        <div class="group dropdown-block">
+          <div class="clear">
+            <div class="clear-line"></div>
+            <div class="clear-line"></div>
+          </div>
+          <label for="hero-movies">Movie:</label>
+          <input id="hero-movies" name="movies" type="text">
+          <ul class="dropdown"></ul>
+        </div>
       </form>
     </div>
   </header>
   <main>
     <div class="container">
-      <h1>Marvel Heroes</h1>
+
       <ul class="cards" id="cards">
       </ul>
     </div>
