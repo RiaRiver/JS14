@@ -1,8 +1,8 @@
 @font-face {
     font-family: 'Gubia';
     src: local('Gubia Light'),
-    url('/fonts/Gubia-Light.woff') format('woff'),
-    url('/fonts/Gubia-Light.woff2') format('woff2');
+    url('../fonts/Gubia-Light.woff') format('woff'),
+    url('../fonts/Gubia-Light.woff2') format('woff2');
     font-weight: 300;
     font-style: normal;
     font-display: swap;
@@ -11,8 +11,8 @@
 @font-face {
     font-family: 'Gubia';
     src: local('Gubia'),
-    url('/fonts/Gubia.woff') format('woff'),
-    url('/fonts/Gubia.woff2') format('woff2');
+    url('../fonts/Gubia.woff') format('woff'),
+    url('../fonts/Gubia.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -21,8 +21,8 @@
 @font-face {
     font-family: 'Gubia';
     src: local('Gubia Bold'),
-    url('/fonts/Gubia-Bold.woff') format('woff'),
-    url('/fonts/Gubia-Bold.woff2') format('woff2');
+    url('../fonts/Gubia-Bold.woff') format('woff'),
+    url('../fonts/Gubia-Bold.woff2') format('woff2');
     font-weight: bold;
     font-style: normal;
     font-display: swap;
@@ -31,8 +31,8 @@
 @font-face {
     font-family: 'Gubia';
     src: local('Gubia Black'),
-    url('/fonts/Gubia-Black.woff') format('woff'),
-    url('/fonts/Gubia-Black.woff2') format('woff2');
+    url('../fonts/Gubia-Black.woff') format('woff'),
+    url('../fonts/Gubia-Black.woff2') format('woff2');
     font-weight: 900;
     font-style: normal;
     font-display: swap;

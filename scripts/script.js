@@ -53,7 +53,7 @@ const renderCard = (cardsElem, hero) => {
       <div class="card-front">
         <div class="card-photo ">
           <h2 class="card-name">${hero.name}</h2>
-          <img class="click-icon" src="click.svg" alt="">
+          <img class="click-icon" src="media/click.svg" alt="">
           <img class="card-image" src="${hero.photo}" alt="${hero.name}">
         </div>
         <div class="card-hero card-block">
@@ -76,7 +76,7 @@ const renderCard = (cardsElem, hero) => {
       <div class="card-back">
         <div class="card-photo">
            <h2 class="card-name">${hero.name}</h2>
-           <img class="click-icon" src="click.svg" alt="">
+           <img class="click-icon" src="media/click.svg" alt="">
           <img class="card-image" src="${hero.photo}" alt="${hero.name}">
         </div>
         <div class="card-movie card-block">
@@ -309,12 +309,10 @@ const start = () => {
           type: 'change'
         });
         input.addEventListener('focus', () => {
-          console.log('фокус инпут', event);
           dropdown.style.display = 'block';
           dropdown.style.opacity = '100';
         });
         input.addEventListener('blur', () => {
-          console.log(document.activeElement);
 
           dropdown.style.display = 'none';
 
@@ -341,7 +339,6 @@ const start = () => {
             input.value = item.textContent;
             toggleClearButton(input, true);
             // dropdown.style.display = 'none';
-            // console.log('item', item);
             input.dispatchEvent(changeEvent);
           }
         });
@@ -380,7 +377,6 @@ class PopUp {
     this.closeEffectsFunc = closeEffectsFunc;
     this.closeButton = this.popUp.querySelector(closeSelector) || null;
 
-    console.log(this.closeEffectsFunc);
     if (popUpButtonsSelector) {
       this.popUpButtons = document.querySelectorAll(popUpButtonsSelector);
     }

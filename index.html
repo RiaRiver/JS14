@@ -4,23 +4,24 @@
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <link href="favicon.png" rel="icon" type="image/png">
   <title>Heroes</title>
   <link href="css/fonts.css" rel="stylesheet">
   <link href="css/normalize.css" rel="stylesheet">
   <link href="css/style.css" rel="stylesheet">
-
-  <script defer src="scripts/script.js"></script>
+  <script defer src="dist/main.js"></script>
 </head>
 
 <body>
   <div class="popup">
     <div class="popup-block">
-      <video class="video" muted="" poster="media/preload.png" preload>
+      <img alt="sound" class="sound" src="media/sound.svg">
+      <video class="video" muted poster="media/preload-image.png" preload>
         <source src="media/marv.mp4" type="video/mp4"/>
         <source src="media/marv.ogv" type="video/ogv"/>
         <source src="media/marv.webm" type="video/webm"/>
       </video>
-      <img alt="" class="preload" src="media/preload.png">
+      <img alt="" class="preload-image" src="media/preload-image.png">
       <div class="info">
         <span class="skip">Skip</span>
         <div class="preloader">
@@ -33,6 +34,11 @@
     </div>
   </div>
   <header>
+    <div class="preloader cards-preloader">
+      <div class="pl-child-1 pl-child"></div>
+      <div class="pl-child-2 pl-child"></div>
+      <div class="pl-child-3 pl-child"></div>
+    </div>
     <div class="container">
       <form action="" autocomplete="off" class="form" id="filters" name="filters">
         <img alt="Marvel Heroes Logo" class="logo" src="media/Logo.png">
@@ -78,15 +84,14 @@
         <li>For filters with input fields it is possible to chose value from dropdown only by mouse (seletion by
           keyboard keys does not supported)
         </li>
-        <li>Additional info for hero is avaible by click on his/her image</li>
+        <li>Additional info for hero is available by click on his/her image</li>
       </ol>
     </div>
   </header>
+
   <main>
     <div class="container">
-
-      <ul class="cards" id="cards">
-      </ul>
+      <ul class="cards" id="cards"></ul>
     </div>
   </main>
 </body>
