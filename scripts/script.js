@@ -250,7 +250,7 @@ const start = () => {
   const preload = document.querySelector('.preload');
   const filterForm = document.forms.filters;
 
-  const videoPopUp = new PopUp('.popup', () => new Promise(resolve => {
+  const videoPopUp = new PopUp({ popUpSelector: '.popup', closeEffectsFunc: () => new Promise(resolve => {
     video.remove();
     preload.style.display = 'block';
     videoPopUp.closeButton.style.display = 'none';
@@ -265,7 +265,7 @@ const start = () => {
         }
       }
     });
-  }), '.skip');
+  }), closeSelector: '.skip' });
 
   setTimeout(() => {
     skipButton.style.display = 'block';
@@ -354,6 +354,8 @@ const start = () => {
         inputs.forEach(input => toggleClearButton(input, false));
       });
 
+      const helpPopUp = new PopUp({ popUpSelector: '.help', closeSelector: '.close', popUpButtonsSelector: '.question' });
+      console.log(helpPopUp);
       // Показать кнопку "Пропустить"
       skipButton.style.display = 'block';
 
@@ -372,12 +374,22 @@ const start = () => {
 };
 
 class PopUp {
-  constructor(popUpSelector, closeEffectsFunc = () => {}, closeSelector = '.popup-close', popUpButtonsSelector) {
+  // eslint-disable-next-line arrow-body-style
+  constructor({ popUpSelector, closeEffectsFunc = () => {}, closeSelector = '.popup-close', popUpButtonsSelector }) {
     this.popUp = document.querySelector(popUpSelector);
     this.closeEffectsFunc = closeEffectsFunc;
     this.closeButton = this.popUp.querySelector(closeSelector) || null;
+
+    console.log(this.closeEffectsFunc);
     if (popUpButtonsSelector) {
       this.popUpButtons = document.querySelectorAll(popUpButtonsSelector);
+    }
+    if (this.popUpButtons && this.popUpButtons.length) {
+      this.popUpButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          this.popUp.style.display = 'block';
+        });
+      });
     }
 
     this.popUp.addEventListener('click', event => {
@@ -389,7 +401,7 @@ class PopUp {
 
   // Закрытие модального окна
   closePopUp() {
-    this.closeEffectsFunc().then(() => {
+    Promise.resolve(this.closeEffectsFunc()).then(() => {
       this.popUp.style.display = 'none';
     });
   }

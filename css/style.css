@@ -35,7 +35,47 @@ header{
     background: linear-gradient(rgba(255, 255, 255, 0.25),rgba(255, 255, 255, 0.25)), url('/media/bg.png') no-repeat center center fixed;
     background-size: cover;
 }
+.help{
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-height: 100%;
+    background-color: #103269;
+    z-index: 12;
+    width: 100%;
+}
+.help ol {
+    list-style: decimal;
+    padding: 10px 30px 10px 30px;
+}
+.help li {
+    margin-bottom: 5px;
+}
+.close{
+    display: flex;
+    align-items: center;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
 
+.close-line{
+    position: absolute;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: white;
+}
+.close-line:first-child{
+    transform: rotate(45deg);
+}
+.close-line:last-child{
+    transform: rotate(-45deg);
+}
 form{
     padding: 10px 0;
     display: grid;

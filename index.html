@@ -34,7 +34,7 @@
   </div>
   <header>
     <div class="container">
-      <form action="" class="form" id="filters" name="filters" autocomplete="off">
+      <form action="" autocomplete="off" class="form" id="filters" name="filters">
         <img alt="Marvel Heroes Logo" class="logo" src="media/Logo.png">
         <div class="group group--first"><label for="hero-gender">Gender:</label>
           <select id="hero-gender" name="gender"></select></div>
@@ -50,8 +50,8 @@
             <div class="clear-line"></div>
           </div>
           <label for="hero-name">Name:</label>
-            <input id="hero-name" name="name" type="text" >
-            <ul class="dropdown"></ul>
+          <input id="hero-name" name="name" type="text">
+          <ul class="dropdown"></ul>
         </div>
         <img alt="question" class="question" src="media/question.svg">
         <img alt="reset" class="reset" src="media/reset.svg">
@@ -65,6 +65,21 @@
           <ul class="dropdown"></ul>
         </div>
       </form>
+    </div>
+    <div class="help">
+      <div class="close">
+        <div class="close-line"></div>
+        <div class="close-line"></div>
+      </div>
+      <ol>
+        <li>Filters are depends on each other. This means if data was filtered by one filter, other filters will be
+          updated and non relevant filter values will be excluded from dropdowns
+        </li>
+        <li>For filters with input fields it is possible to chose value from dropdown only by mouse (seletion by
+          keyboard keys does not supported)
+        </li>
+        <li>Additional info for hero is avaible by click on his/her image</li>
+      </ol>
     </div>
   </header>
   <main>
