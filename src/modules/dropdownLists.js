@@ -1,10 +1,13 @@
 import {data} from "../../db_cities";
 
+const dataLoc = data.RU;
+
 const createCountryBlock = () => {
   const countryBlock = document.createElement('div');
   countryBlock.className = 'dropdown-lists__countryBlock';
   return countryBlock;
 }
+
 const createTotalLine = (country, count) => {
   const totalLine = document.createElement('div');
   totalLine.className = 'dropdown-lists__total-line';
@@ -14,6 +17,7 @@ const createTotalLine = (country, count) => {
 `;
   return totalLine;
 }
+
 const createLine = (city) => {
   const line = document.createElement('div');
   line.dataset.cityLink = city.link;
@@ -24,11 +28,12 @@ const createLine = (city) => {
 `;
   return line;
 }
-export const addDefault = () => {
+
+export const dropdownLists = () => {
   const dropdownColDefault = document.querySelector('.dropdown-lists__list--default .dropdown-lists__col');
   dropdownColDefault.innerHTML = '';
-  const RU = data.RU;
-  RU.forEach(item => {
+  dataLoc.forEach(item => {
+    item.cities.sort((a, b) => b.count - a.count);
     const countryBlock = createCountryBlock();
     const totalLine = createTotalLine(item.country, item.count);
     countryBlock.append(totalLine);
@@ -36,41 +41,43 @@ export const addDefault = () => {
       const line = createLine(item.cities[i]);
       countryBlock.append(line);
     }
+
     dropdownColDefault.append(countryBlock);
   })
 };
 
 export const addSelect = (country) => {
-  const dropdownColSelect= document.querySelector('.dropdown-lists__list--select .dropdown-lists__col');
+  const dropdownColSelect = document.querySelector('.dropdown-lists__list--select .dropdown-lists__col');
   dropdownColSelect.innerHTML = '';
-  const RU = data.RU;
-  const item = RU.find(item => item.country === country);
-    const countryBlock = createCountryBlock();
-    const totalLine = createTotalLine(item.country, item.count);
-    countryBlock.append(totalLine);
-    for (let i = 0; i < item.cities.length; i++) {
-      const line = createLine(item.cities[i]);
-      countryBlock.append(line);
-    }
-  dropdownColSelect.append(countryBlock);
+  const item = dataLoc.find(item => item.country === country);
+  item.cities.sort((a, b) => b.count - a.count);
+  const countryBlock = createCountryBlock();
+  const totalLine = createTotalLine(item.country, item.count);
+  countryBlock.append(totalLine);
 
+  for (let i = 0; i < item.cities.length; i++) {
+    const line = createLine(item.cities[i]);
+    countryBlock.append(line);
+  }
+
+  dropdownColSelect.append(countryBlock);
 };
 
 export const addAutocomplete = (value) => {
-  const dropdownColAutocomplete= document.querySelector('.dropdown-lists__list--autocomplete .dropdown-lists__col');
+  const dropdownColAutocomplete = document.querySelector('.dropdown-lists__list--autocomplete .dropdown-lists__col');
   dropdownColAutocomplete.innerHTML = '';
-  const RU = data.RU;
-  console.log(RU);
-  const items = RU.reduce((acc, country) => acc.concat(country.cities.filter(city => city.name.toLowerCase().startsWith(value.toLowerCase()))), []);
+  const items = dataLoc.reduce((acc, country) => acc.concat(country.cities.filter(city => city.name.toLowerCase().startsWith(value.toLowerCase()))), []);
   const countryBlock = createCountryBlock();
 
-  items.forEach(item =>{
+  items.forEach(item => {
     const line = createLine(item);
     countryBlock.append(line);
   })
-if(!items.length) {
-  const line = createLine({name: 'Ничего не найдено', count: ''});
-  countryBlock.append(line);
-}
+
+  if (!items.length) {
+    const line = createLine({name: 'Ничего не найдено', count: '', link: 'none'});
+    countryBlock.append(line);
+  }
+
   dropdownColAutocomplete.append(countryBlock);
 };
