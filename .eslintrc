@@ -149,7 +149,6 @@
     "prefer-rest-params": ["error"],
     "prefer-spread": ["error"],
     "rest-spread-spacing": ["error", "never"],
-    "template-curly-spacing": ["error", "never"],
-    "func-style": ["warn", "expression"]
+    "template-curly-spacing": ["error", "never"]
   }
 }
