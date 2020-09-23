@@ -131,7 +131,8 @@ body .main .input-cities .close-button:before {
   width: 100%;
   background: #fff;
   max-height: 300px;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .dropdown-lists {
@@ -143,6 +144,7 @@ body .main .input-cities .close-button:before {
 
 .dropdown-lists__list {
   width: 100%;
+  flex-shrink: 0;
 }
 
 .dropdown-lists__list--select {
@@ -233,5 +235,40 @@ body .main .input-cities .close-button:before {
   height: 100%;
   -webkit-transition: 0.4s;
   transition: 0.4s;
+}
+
+.match {
+  font-weight: bold;
+}
+
+.preloader {
+  margin: 3px auto;
+  text-align: center;
+}
+
+.pl-child {
+  width: 40px;
+  height: 15px;
+  background-color: #fff;
+  border-radius: 10px;
+  display: inline-block;
+  animation: preloader 1.4s ease-in-out 0s infinite both;
+}
+
+.pl-child-1 {
+  animation-delay: -0.32s;
+}
+
+.pl-child-2 {
+  animation-delay: -0.16s;
+}
+
+@keyframes preloader {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1.0);
+  }
 }
 /*# sourceMappingURL=style.css.map */

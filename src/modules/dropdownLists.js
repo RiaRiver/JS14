@@ -1,6 +1,4 @@
-import {data} from "../../db_cities";
-
-const dataLoc = data.RU;
+import {getData} from "./getData";
 
 const createCountryBlock = () => {
   const countryBlock = document.createElement('div');
@@ -29,10 +27,10 @@ const createLine = (city) => {
   return line;
 }
 
-export const dropdownLists = () => {
+export const addDefault = (data) => {
   const dropdownColDefault = document.querySelector('.dropdown-lists__list--default .dropdown-lists__col');
   dropdownColDefault.innerHTML = '';
-  dataLoc.forEach(item => {
+  data.forEach(item => {
     item.cities.sort((a, b) => b.count - a.count);
     const countryBlock = createCountryBlock();
     const totalLine = createTotalLine(item.country, item.count);
@@ -46,10 +44,10 @@ export const dropdownLists = () => {
   })
 };
 
-export const addSelect = (country) => {
+export const addSelect = (data, country) => {
   const dropdownColSelect = document.querySelector('.dropdown-lists__list--select .dropdown-lists__col');
   dropdownColSelect.innerHTML = '';
-  const item = dataLoc.find(item => item.country === country);
+  const item = data.find(item => item.country === country);
   item.cities.sort((a, b) => b.count - a.count);
   const countryBlock = createCountryBlock();
   const totalLine = createTotalLine(item.country, item.count);
@@ -63,14 +61,18 @@ export const addSelect = (country) => {
   dropdownColSelect.append(countryBlock);
 };
 
-export const addAutocomplete = (value) => {
+export const addAutocomplete = (data, value) => {
   const dropdownColAutocomplete = document.querySelector('.dropdown-lists__list--autocomplete .dropdown-lists__col');
   dropdownColAutocomplete.innerHTML = '';
-  const items = dataLoc.reduce((acc, country) => acc.concat(country.cities.filter(city => city.name.toLowerCase().startsWith(value.toLowerCase()))), []);
+  const items = data.reduce((acc, country) => acc.concat(country.cities.filter(city => city.name.toLowerCase().startsWith(value.toLowerCase()))), []);
   const countryBlock = createCountryBlock();
 
   items.forEach(item => {
     const line = createLine(item);
+    const cityName = line.firstElementChild;
+    console.log('child', cityName)
+    const cityNameStr =cityName.textContent;
+    cityName.innerHTML = `<span class="match">${cityNameStr.slice(0,value.length)}</span>${cityNameStr.slice(value.length)}`
     countryBlock.append(line);
   })
 
