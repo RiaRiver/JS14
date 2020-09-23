@@ -26,21 +26,27 @@ const createLine = (city) => {
 `;
   return line;
 }
+const addCountry = (item,targetElem) => {
+  item.cities.sort((a, b) => b.count - a.count);
+  const countryBlock = createCountryBlock();
+  const totalLine = createTotalLine(item.country, item.count);
+  countryBlock.append(totalLine);
+  for (let i = 0; i < 3; i++) {
+    const line = createLine(item.cities[i]);
+    countryBlock.append(line);
+  }
+  targetElem.append(countryBlock);
+}
 
-export const addDefault = (data) => {
+export const addDefault = (data, locale) => {
+  const localCountry = {RU: 'Россия', EN: 'United Kingdom', DE: 'Deutschland'};
   const dropdownColDefault = document.querySelector('.dropdown-lists__list--default .dropdown-lists__col');
   dropdownColDefault.innerHTML = '';
+  addCountry(data.find(item => item.country === localCountry[locale]),dropdownColDefault);
   data.forEach(item => {
-    item.cities.sort((a, b) => b.count - a.count);
-    const countryBlock = createCountryBlock();
-    const totalLine = createTotalLine(item.country, item.count);
-    countryBlock.append(totalLine);
-    for (let i = 0; i < 3; i++) {
-      const line = createLine(item.cities[i]);
-      countryBlock.append(line);
-    }
-
-    dropdownColDefault.append(countryBlock);
+    if (item.country !== localCountry[locale]){
+    addCountry(item,dropdownColDefault)
+  }
   })
 };
 
