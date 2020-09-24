@@ -12,6 +12,7 @@ import {changeCommandPhotoByMouseEvent} from "./modules/changeCommandPhotoByMous
 import {validate} from "./modules/validate";
 import {calc} from "./modules/calc";
 import {sendForm} from "./modules/sendForm";
+import {SliderCarousel} from "./modules/sliderCarousel";
 
 // Запуск таймера
 countTimer('20 september 2020 08:15:30', '#timer-hours', '#timer-minutes', '#timer-seconds');
@@ -114,3 +115,28 @@ calc(100);
     `
     });
 }
+
+// Запуск карусели
+const carousel = new SliderCarousel({
+  main: '.companies-wrapper',
+  wrap: '.companies-hor',
+  prev: '#test-left',
+  next: '#test-right',
+  loop: true,
+  slidesPerView: 4,
+  responsive: [
+    {
+      breakpoint: 1024,
+      sliderPerView: 3
+    },
+    {
+      breakpoint: 768,
+      sliderPerView: 2
+    },
+    {
+      breakpoint: 576,
+      sliderPerView: 1
+    }
+  ]
+});
+carousel.init();
